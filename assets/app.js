@@ -9,5 +9,14 @@ import './bootstrap.js';
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+import { createApp } from 'vue';
+import Hello from './vue/controllers/Hello.vue';
+import { createPinia } from 'pinia';
+
+const pinia = createPinia();
+
+const inicio = createApp(Hello);
+inicio.use(pinia);
+inicio.mount('#inicio');
 
 registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
