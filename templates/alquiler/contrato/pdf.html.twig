@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Contrato de Alquiler</title>
+    <style>
+        /* Estilos básicos para el PDF */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            margin: 0 auto;
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Contrato de Alquiler</h1>
+    </div>
+    <div class="content">
+    {{contrato.id}}
+        <p><strong>ID del Contrato:</strong> {{ contrato.id }}</p>
+        <p><strong>Fecha de Ingreso:</strong> {{ contrato.getCoFechaIngreso()|date('d/m/Y') }}</p>
+        <p><strong>Alquiler Mensual:</strong> {{ contrato.getCoAlquilerMensual() }}</p>
+        <p><strong>Agua:</strong> {{ contrato.getCoAgua() }}</p>
+        {# <p><strong>Fecha de Nacimiento:</strong> {{ contrato.getCoFechaNacimiento()|date('d/m/Y') }}</p>
+        <p><strong>Fecha de Nacimiento:</strong> {{ contrato.getCoFechaNacimiento()|date('d/m/Y') }}</p> #}
+        <p><strong>Arrendatario:</strong> {{ arrendatario.getAoNombres() }} {{ arrendatario.getAoApellidos() }}</p>
+        <p><strong>Teléfono:</strong> {{ arrendatario.getAoTelefono() }}</p>
+        <p><strong>Tipo de Arrendatario:</strong> {{ arrendatario.getAoTipo() }}</p>
+        <p><strong>Cédula de Identidad:</strong> {{ arrendatario.getAoCedulaIdentidad() }}</p>
+        <p><strong>Fecha de Nacimiento del Arrendatario:</strong> {{ arrendatario.getAoFechaNacimiento()|date('d/m/Y') }}</p>
+        <p><strong>Residencia:</strong> {{ contrato.getResidenciaId() }}</p>
+        <!-- Agrega más detalles del contrato aquí -->
+        <p><strong>Piso Posición:</strong> {{ piso.getPiPosicion() }}</p>
+        <p><strong>Piso Cuarto:</strong> {{ piso.getPiCuarto() }}</p>
+        <p><strong>Piso Zona:</strong> {{ piso.getPiZona() }}</p>
+    </div>
+</body>
+</html>
