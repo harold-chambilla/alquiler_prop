@@ -1,0 +1,20 @@
+App\Entity\Arrendatario:
+    properties:
+        ao_telefono:
+            - NotBlank: ~
+            - Length:
+                min: 9
+                max: 9
+                exactMessage: 'El teléfono debe tener exactamente {{ limit }} dígitos.'
+            - Regex:
+                pattern: '/^\d+$/'
+                message: 'El teléfono solo debe contener números.'
+        ao_cedula_identidad:
+            - NotBlank: ~
+            - Length:
+                min: 8
+                max: 8
+                exactMessage: 'La cédula de identidad debe tener exactamente {{ limit }} dígitos.'
+            - Regex:
+                pattern: '/^\d+$/'
+                message: 'La cédula de identidad solo debe contener números.'

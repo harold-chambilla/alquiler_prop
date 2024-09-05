@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ArrendatarioRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ArrendatarioRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: ArrendatarioRepository::class)]
+
+/**
+ * @Assert\EnableAutoMapping()
+ */
 class Arrendatario
 {
     #[ORM\Id]
@@ -28,7 +34,7 @@ class Arrendatario
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $ao_tipo = null;
 
-    #[ORM\Column(length: 16, nullable: true)]
+    #[ORM\Column(length: 16)]
     private ?string $ao_cedula_identidad = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -45,7 +51,6 @@ class Arrendatario
 
     #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: 'arrendatario_id')]
     private Collection $contratos;
-
     public function __toString(): string
     {
         return $this->ao_nombres . ' ' . $this->ao_apellidos;

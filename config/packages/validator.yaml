@@ -1,9 +1,9 @@
 framework:
     validation:
-        # Enables validator auto-mapping support.
-        # For instance, basic validation constraints will be inferred from Doctrine's metadata.
-        #auto_mapping:
-        #    App\Entity\: []
+        mapping:
+            paths:
+                - '%kernel.project_dir%/config/packages/validator/arrendatario.yaml'
+
 
 when@test:
     framework:

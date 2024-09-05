@@ -7,8 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ContratoRepository::class)]
+#[Assert\Cascade]
 class Contrato
 {
     #[ORM\Id]
@@ -50,6 +51,8 @@ class Contrato
     {
         return $this->arrendatario_id . ' ' . $this->co_alquiler_mensual;
     }
+    #[ORM\Column]
+    private ?bool $co_estado = null;
 
     public function __construct()
     {
@@ -195,6 +198,14 @@ class Contrato
     public function setCoFechaActual(?\DateTimeInterface $co_fecha_actual): static
     {
         $this->co_fecha_actual = $co_fecha_actual;
+    public function isCoEstado(): ?bool
+    {
+        return $this->co_estado;
+    }
+
+    public function setCoEstado(bool $co_estado): static
+    {
+        $this->co_estado = $co_estado;
 
         return $this;
     }

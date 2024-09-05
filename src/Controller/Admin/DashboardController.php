@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Arrendatario;
+use App\Entity\Contrato;
 use App\Entity\Piso;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -12,12 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         return $this->redirect($adminUrlGenerator->setController(ContratoCrudController::class)->generateUrl());
-
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
         // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -44,8 +45,9 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-
-        yield MenuItem::linkToCrud('Piso', '', Piso::class);
+        yield MenuItem::linkToCrud('Contrato', 'fa fa-file-text', Contrato::class);
+        yield MenuItem::linkToCrud('Arrendatario', 'fa fa-user', Arrendatario::class);
+        yield MenuItem::linkToCrud('Piso', 'fa fa-building', Piso::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 }
