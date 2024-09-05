@@ -7,8 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ContratoRepository::class)]
+#[Assert\Cascade]
 class Contrato
 {
     #[ORM\Id]
@@ -42,6 +43,9 @@ class Contrato
 
     #[ORM\Column(type: Types::DECIMAL, precision: 16, scale: 2, nullable: true)]
     private ?string $co_agua = null;
+
+    #[ORM\Column]
+    private ?bool $co_estado = null;
 
     public function __construct()
     {
@@ -175,6 +179,18 @@ class Contrato
     public function setCoAgua(?string $co_agua): static
     {
         $this->co_agua = $co_agua;
+
+        return $this;
+    }
+
+    public function isCoEstado(): ?bool
+    {
+        return $this->co_estado;
+    }
+
+    public function setCoEstado(bool $co_estado): static
+    {
+        $this->co_estado = $co_estado;
 
         return $this;
     }

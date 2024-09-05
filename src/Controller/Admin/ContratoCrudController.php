@@ -2,21 +2,23 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Arrendatario;
 use App\Entity\Contrato;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use App\Entity\Arrendatario;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ContratoCrudController extends AbstractCrudController
 {
@@ -36,37 +38,71 @@ class ContratoCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            // Campos del contrato
-            DateField::new('co_fecha_ingreso', 'Fecha de Ingreso')
-                ->setRequired(true),
-            // DateField::new('co_fecha_nacimiento', 'Fecha de Nacimiento')
-            //     ->setRequired(true),    
-    
-            // FormField::addPanel('Cuarto de Arrendatario'),
-            
-            AssociationField::new('piso_id', 'Piso')
+        
+        $fields = [];
+        $fields[] = DateField::new('co_fecha_ingreso', 'Fecha de Ingreso')
+            ->setRequired(true);
+        $fields[] = AssociationField::new('piso_id', 'Piso')
             ->setRequired(true)
-            ->setCrudController(PisoCrudController::class),
-            
-            // FormField::addPanel('Información del Arrendatario'),
-            TextField::new('arrendatario_id.ao_nombres', 'Nombres del Arrendatario')
-                ->setFormTypeOption('required', true),
-            TextField::new('arrendatario_id.ao_apellidos', 'Apellidos del Arrendatario')
-                ->setFormTypeOption('required', true),
-            TextField::new('arrendatario_id.ao_telefono', 'Teléfono del Arrendatario'),
-            TextField::new('arrendatario_id.ao_tipo', 'Tipo de Arrendatario'),
-            TextField::new('arrendatario_id.ao_cedula_identidad', 'Cédula de Identidad'),
-            DateField::new('arrendatario_id.ao_fecha_nacimiento', 'Fecha de Nacimiento del Arrendatario'),
+            ->setCrudController(PisoCrudController::class);
 
-            MoneyField::new('co_alquiler_mensual', 'Alquiler Mensual')
-                ->setCurrency('PEN')
-                ->setStoredAsCents(false)
-                ->setNumDecimals(2),
-            MoneyField::new('co_agua', 'Agua')
-                ->setCurrency('PEN')
-                ->setStoredAsCents(false)
-                ->setNumDecimals(2),
+        if ($pageName === Crud::PAGE_INDEX) {
+            // Mostrar el campo combinado en la vista de índice
+            $fields[] = AssociationField::new('arrendatario_id', 'Arrendatario')
+                ->formatValue(function ($value, $entity) {
+                    if ($entity && $entity->getArrendatarioId()) {
+                        return sprintf(
+                            '%s %s (DNI: %s)',
+                            $entity->getArrendatarioId()->getAoNombres(),
+                            $entity->getArrendatarioId()->getAoApellidos(),
+                            $entity->getArrendatarioId()->getAoCedulaIdentidad()
+                        );
+                    }
+                    return '';
+                });
+        } else {
+            // Mostrar todos los campos en la vista de edición/agregado
+            $fields[] = FormField::addPanel('Información del Arrendatario');
+            $fields[] = TextField::new('arrendatario_id.ao_nombres', 'Nombres del Arrendatario')
+                ->setFormTypeOption('required', true);
+            $fields[] = TextField::new('arrendatario_id.ao_apellidos', 'Apellidos del Arrendatario')
+                ->setFormTypeOption('required', true);
+            $fields[] = TextField::new('arrendatario_id.ao_telefono', 'Teléfono del Arrendatario')
+                ->setRequired(true);
+            $fields[] = TextField::new('arrendatario_id.ao_tipo', 'Tipo de Arrendatario')
+                ->setRequired(true);
+            $fields[] = TextField::new('arrendatario_id.ao_cedula_identidad', 'Cédula de Identidad')
+                ->setRequired(true);
+            $fields[] = DateField::new('arrendatario_id.ao_fecha_nacimiento', 'Fecha de Nacimiento del Arrendatario')
+                ->setRequired(true);
+        }
+    
+        // Otros campos del contrato (comunes para todas las páginas)
+        $fields[] = MoneyField::new('co_alquiler_mensual', 'Alquiler Mensual')
+            ->setCurrency('PEN')
+            ->setStoredAsCents(false)
+            ->setNumDecimals(2)->setRequired(true);
+        $fields[] = MoneyField::new('co_agua', 'Agua')
+            ->setCurrency('PEN')
+            ->setStoredAsCents(false)
+            ->setNumDecimals(2)->setRequired(true);
+            if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_EDIT) {
+                $fields[] = ChoiceField::new('co_estado', 'Estado contrato')
+                    ->setChoices([
+                        'Activo' => 1,
+                        'Terminado' => 0,
+                    ])
+                    ->renderAsBadges([
+                        1 => 'success',   // verde para "Activo"
+                        0 => 'danger',    // rojo para "Terminado"
+                    ])
+                    ->formatValue(function ($value, $entity) {
+                        return $value == 1 ? 'Activo' : 'Terminado';
+                    });
+            }
+            
+    
+        return $fields;
             // NumberField::new('co_alquiler_mensual', 'Alquiler Mensual')
             //     ->setStoredAsString('number')
             //     ->setNumDecimals(2)
@@ -84,7 +120,7 @@ class ContratoCrudController extends AbstractCrudController
             // NumberField::new('co_costo_agua', 'Costo del Agua')
             //     ->setRequired(true),
             // TextField::new('co_otro_dato', 'Otro Dato'),
-        ];
+        
     }
 
     public function configureActions(Actions $actions): Actions
@@ -109,7 +145,7 @@ class ContratoCrudController extends AbstractCrudController
         // Inicializamos un nuevo arrendatario
         $arrendatario = new Arrendatario();
         $contrato->setArrendatarioId($arrendatario);
-
+        $contrato->setCoEstado(1);
         return $contrato;
     }
     /*

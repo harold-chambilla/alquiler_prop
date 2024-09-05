@@ -4,6 +4,6 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-admin:
-    path: /
-    controller: App\Controller\Admin\DashboardController::index
+# login:
+#     path: /
+#     controller: App\Controller\SecurityController::login

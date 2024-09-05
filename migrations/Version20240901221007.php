@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240830172534 extends AbstractMigration
+final class Version20240901221007 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,9 +20,9 @@ final class Version20240830172534 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE arrendatario (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, ao_nombres VARCHAR(64) DEFAULT NULL, ao_apellidos VARCHAR(64) DEFAULT NULL, ao_telefono VARCHAR(16) DEFAULT NULL, ao_tipo VARCHAR(64) DEFAULT NULL, ao_cedula_identidad VARCHAR(16) DEFAULT NULL, ao_fecha_nacimiento DATE DEFAULT NULL, ao_foto_dni CLOB DEFAULT NULL, ao_foto CLOB DEFAULT NULL, ao_estado BOOLEAN DEFAULT NULL)');
+        $this->addSql('CREATE TABLE arrendatario (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, ao_nombres VARCHAR(64) DEFAULT NULL, ao_apellidos VARCHAR(64) DEFAULT NULL, ao_telefono VARCHAR(16) DEFAULT NULL, ao_tipo VARCHAR(64) DEFAULT NULL, ao_cedula_identidad VARCHAR(16) NOT NULL, ao_fecha_nacimiento DATE DEFAULT NULL, ao_foto_dni CLOB DEFAULT NULL, ao_foto CLOB DEFAULT NULL, ao_estado BOOLEAN DEFAULT NULL)');
         $this->addSql('CREATE TABLE concepto_pago (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, cop_nombre VARCHAR(64) DEFAULT NULL, cop_descripcion CLOB DEFAULT NULL, cop_precio NUMERIC(16, 2) DEFAULT NULL, cop_estado BOOLEAN DEFAULT NULL)');
-        $this->addSql('CREATE TABLE contrato (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, arrendatario_id_id INTEGER DEFAULT NULL, usuario_id_id INTEGER DEFAULT NULL, residencia_id_id INTEGER DEFAULT NULL, piso_id_id INTEGER DEFAULT NULL, co_fecha_ingreso DATETIME DEFAULT NULL, co_fecha_vencimiento DATE DEFAULT NULL, co_alquiler_mensual NUMERIC(16, 2) DEFAULT NULL, co_agua NUMERIC(16, 2) DEFAULT NULL, CONSTRAINT FK_6669652394E139C4 FOREIGN KEY (arrendatario_id_id) REFERENCES arrendatario (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523629AF449 FOREIGN KEY (usuario_id_id) REFERENCES usuario (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523DC60AB69 FOREIGN KEY (residencia_id_id) REFERENCES residencia (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523FE9CA306 FOREIGN KEY (piso_id_id) REFERENCES piso (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('CREATE TABLE contrato (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, arrendatario_id_id INTEGER DEFAULT NULL, usuario_id_id INTEGER DEFAULT NULL, residencia_id_id INTEGER DEFAULT NULL, piso_id_id INTEGER DEFAULT NULL, co_fecha_ingreso DATETIME DEFAULT NULL, co_fecha_vencimiento DATE DEFAULT NULL, co_alquiler_mensual NUMERIC(16, 2) DEFAULT NULL, co_agua NUMERIC(16, 2) DEFAULT NULL, co_estado BOOLEAN NOT NULL, CONSTRAINT FK_6669652394E139C4 FOREIGN KEY (arrendatario_id_id) REFERENCES arrendatario (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523629AF449 FOREIGN KEY (usuario_id_id) REFERENCES usuario (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523DC60AB69 FOREIGN KEY (residencia_id_id) REFERENCES residencia (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_66696523FE9CA306 FOREIGN KEY (piso_id_id) REFERENCES piso (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_6669652394E139C4 ON contrato (arrendatario_id_id)');
         $this->addSql('CREATE INDEX IDX_66696523629AF449 ON contrato (usuario_id_id)');
         $this->addSql('CREATE INDEX IDX_66696523DC60AB69 ON contrato (residencia_id_id)');
