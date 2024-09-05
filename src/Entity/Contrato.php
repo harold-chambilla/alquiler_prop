@@ -198,6 +198,9 @@ class Contrato
     public function setCoFechaActual(?\DateTimeInterface $co_fecha_actual): static
     {
         $this->co_fecha_actual = $co_fecha_actual;
+        
+        return $this;
+    }
     public function isCoEstado(): ?bool
     {
         return $this->co_estado;

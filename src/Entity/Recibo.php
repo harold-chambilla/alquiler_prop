@@ -40,10 +40,17 @@ class Recibo
     #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'recibo_id')]
     private Collection $detalleConsumoLuzs;
 
+    /**
+     * @var Collection<int, DetalleConsumoLuz>
+     */
+    #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'recibo_id')]
+    private Collection $detalleConsumoLuz;
+
     public function __construct()
     {
         $this->reciboConceptoPagos = new ArrayCollection();
         $this->detalleConsumoLuzs = new ArrayCollection();
+        $this->detalleConsumoLuz = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,5 +177,13 @@ class Recibo
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, DetalleConsumoLuz>
+     */
+    public function getDetalleConsumoLuz(): Collection
+    {
+        return $this->detalleConsumoLuz;
     }
 }
