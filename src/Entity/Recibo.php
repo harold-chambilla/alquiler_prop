@@ -29,17 +29,21 @@ class Recibo
     private ?string $re_pago_total = null;
 
     #[ORM\ManyToOne(inversedBy: 'recibos')]
-    private ?DetalleConsumoLuz $detalle_consumo_luz_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'recibos')]
     private ?Contrato $contrato_id = null;
 
     #[ORM\OneToMany(targetEntity: ReciboConceptoPago::class, mappedBy: 'recibo_id')]
     private Collection $reciboConceptoPagos;
 
+    /**
+     * @var Collection<int, DetalleConsumoLuz>
+     */
+    #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'recibo_id')]
+    private Collection $detalleConsumoLuzs;
+
     public function __construct()
     {
         $this->reciboConceptoPagos = new ArrayCollection();
+        $this->detalleConsumoLuzs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,17 +99,6 @@ class Recibo
         return $this;
     }
 
-    public function getDetalleConsumoLuzId(): ?DetalleConsumoLuz
-    {
-        return $this->detalle_consumo_luz_id;
-    }
-
-    public function setDetalleConsumoLuzId(?DetalleConsumoLuz $detalle_consumo_luz_id): static
-    {
-        $this->detalle_consumo_luz_id = $detalle_consumo_luz_id;
-
-        return $this;
-    }
 
     public function getContratoId(): ?Contrato
     {
@@ -143,6 +136,36 @@ class Recibo
             // set the owning side to null (unless already changed)
             if ($reciboConceptoPago->getReciboId() === $this) {
                 $reciboConceptoPago->setReciboId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DetalleConsumoLuz>
+     */
+    public function getDetalleConsumoLuzs(): Collection
+    {
+        return $this->detalleConsumoLuzs;
+    }
+
+    public function addDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
+    {
+        if (!$this->detalleConsumoLuzs->contains($detalleConsumoLuz)) {
+            $this->detalleConsumoLuzs->add($detalleConsumoLuz);
+            $detalleConsumoLuz->setReciboId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
+    {
+        if ($this->detalleConsumoLuzs->removeElement($detalleConsumoLuz)) {
+            // set the owning side to null (unless already changed)
+            if ($detalleConsumoLuz->getReciboId() === $this) {
+                $detalleConsumoLuz->setReciboId(null);
             }
         }
 

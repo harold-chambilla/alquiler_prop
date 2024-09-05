@@ -43,6 +43,14 @@ class Contrato
     #[ORM\Column(type: Types::DECIMAL, precision: 16, scale: 2, nullable: true)]
     private ?string $co_agua = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $co_fecha_actual = null;
+
+    public function __toString(): string
+    {
+        return $this->arrendatario_id . ' ' . $this->co_alquiler_mensual;
+    }
+
     public function __construct()
     {
         $this->recibos = new ArrayCollection();
@@ -175,6 +183,18 @@ class Contrato
     public function setCoAgua(?string $co_agua): static
     {
         $this->co_agua = $co_agua;
+
+        return $this;
+    }
+
+    public function getCoFechaActual(): ?\DateTimeInterface
+    {
+        return $this->co_fecha_actual;
+    }
+
+    public function setCoFechaActual(?\DateTimeInterface $co_fecha_actual): static
+    {
+        $this->co_fecha_actual = $co_fecha_actual;
 
         return $this;
     }

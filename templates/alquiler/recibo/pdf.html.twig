@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Recibo</title>
+</head>
+<body>
+    <div class="recibo-header">
+        <h1>Recibo de Consumo</h1>
+        <p>Recibo N°: {{ recibo.id }}</p>
+        <p>Fecha: {{ "now"|date("d/m/Y") }}</p>
+    </div>
+
+    <table class="recibo-details">
+        <thead>
+            <tr>
+                <th>Concepto</th>
+                <th>Consumo</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Luz</td>
+                <td>{{ consumoLuz }} kWh</td>
+                <td>S/. {{ precioLuz|number_format(2, '.', ',') }}</td>
+            </tr>
+            <tr>
+                <td>Agua</td>
+                <td>{{ consumoAgua }} m³</td>
+                <td>S/. {{ precioAgua|number_format(2, '.', ',') }}</td>
+            </tr>
+            <tr>
+                <td>Escalera</td>
+                <td>{{ consumoEscalera }} kWh</td>
+                <td>S/. {{ precioEscalera|number_format(2, '.', ',') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="recibo-total">
+        Total a pagar: S/. {{ totalRecibo|number_format(2, '.', ',') }}
+    </p>
+    <div>Alquiler Mensual: {{ contrato.getCoAlquilerMensual() }}</div>
+    <div>Agua: {{ contrato.getCoAgua() }}</div>
+</body>
+</html>
