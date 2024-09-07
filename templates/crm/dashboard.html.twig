@@ -1,0 +1,24 @@
+{% extends '@!EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Nombres</th>
+            <th scope="col">Apellidos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for arr in arrendatarios %}
+            <tr>
+                <td>{{ arr.aonombres }}</td>
+                <td>{{ arr.aoapellidos }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2" class="text-center">No hay arrendatarios disponibles</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
