@@ -34,13 +34,8 @@ class DetalleConsumoLuz
     #[ORM\ManyToOne(inversedBy: 'detalleConsumoLuzs')]
     private ?Lectura $lectura_actual_id = null;
 
-    #[ORM\OneToMany(targetEntity: Recibo::class, mappedBy: 'detalle_consumo_luz_id')]
-    private Collection $recibos;
-
-    public function __construct()
-    {
-        $this->recibos = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'detalleConsumoLuz')]
+    private ?Recibo $recibo_id = null;
 
     public function getId(): ?int
     {
@@ -119,32 +114,14 @@ class DetalleConsumoLuz
         return $this;
     }
 
-    /**
-     * @return Collection<int, Recibo>
-     */
-    public function getRecibos(): Collection
+    public function getReciboId(): ?Recibo
     {
-        return $this->recibos;
+        return $this->recibo_id;
     }
 
-    public function addRecibo(Recibo $recibo): static
+    public function setReciboId(?Recibo $recibo_id): static
     {
-        if (!$this->recibos->contains($recibo)) {
-            $this->recibos->add($recibo);
-            $recibo->setDetalleConsumoLuzId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRecibo(Recibo $recibo): static
-    {
-        if ($this->recibos->removeElement($recibo)) {
-            // set the owning side to null (unless already changed)
-            if ($recibo->getDetalleConsumoLuzId() === $this) {
-                $recibo->setDetalleConsumoLuzId(null);
-            }
-        }
+        $this->recibo_id = $recibo_id;
 
         return $this;
     }

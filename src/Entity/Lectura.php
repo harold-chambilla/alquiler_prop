@@ -31,6 +31,9 @@ class Lectura
     #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'lectura_anterior_id')]
     private Collection $detalleConsumoLuzs;
 
+    #[ORM\Column(length: 16, nullable: true)]
+    private ?string $lel_tipo = null;
+
     public function __construct()
     {
         $this->detalleConsumoLuzs = new ArrayCollection();
@@ -115,6 +118,18 @@ class Lectura
                 $detalleConsumoLuz->setLecturaAnteriorId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLelTipo(): ?string
+    {
+        return $this->lel_tipo;
+    }
+
+    public function setLelTipo(?string $lel_tipo): static
+    {
+        $this->lel_tipo = $lel_tipo;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Arrendatario;
 use App\Entity\Contrato;
 use App\Entity\Piso;
+use App\Repository\ArrendatarioRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -14,11 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(private ArrendatarioRepository $arrendatarioRepository){ }
+
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
-        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        return $this->redirect($adminUrlGenerator->setController(ContratoCrudController::class)->generateUrl());
+        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        // return $this->redirect($adminUrlGenerator->setController(ContratoCrudController::class)->generateUrl());
+        
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
         // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
@@ -33,7 +37,10 @@ class DashboardController extends AbstractDashboardController
         // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
         // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
         //
-        // return $this->render('some/path/my-dashboard.html.twig');
+
+        return $this->render('crm/dashboard.html.twig', [
+            "arrendatarios" => $this->arrendatarioRepository->findAll(),
+        ]);
     }
 
     public function configureDashboard(): Dashboard

@@ -5,42 +5,422 @@
     <title>Contrato de Alquiler</title>
     <style>
         /* Estilos básicos para el PDF */
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .content {
-            margin: 0 auto;
-            width: 80%;
-        }
+    body {
+        font-family: Calibri;
+        /* margin: 2.5px 3px 2.5px 3px;  superior,derecha,inferior,izquierda*/
+        font-size: 20px;
+        text-transform: uppercase;
+        text-rendering: geometricPrecision;
+    }
+
+    p {
+    text-align:justify
+    }
+
+    .text1 {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 10.0pt;
+        margin-left: 0cm;
+        line-height: 115%;
+        font-size: 19px;
+        font-family: "Arial",sans-serif;
+        text-align: center;
+    }
+
+    .text2 {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 10.0pt;
+        margin-left: 0cm;
+        line-height: 115%;
+        font-size: 16px;
+        font-family: "Calibri",sans-serif;
+        text-align: justify;
+    }
+
+    .text3 {
+        font-size: 19px;
+        line-height: 115%;
+        font-family: "Arial",sans-serif;
+    }
+
+    .firma1{
+        max-width: 400px;
+        text-align: center;
+        position: absolute;
+        left: 16px;
+    }
+    .firma2{
+        max-width: 400px;
+        text-align: center;
+        position: absolute;
+        right: 16px;
+    }
+
+    .firma3 {
+
+        text-align: center;
+
+    }
     </style>
 </head>
+{% macro formatFecha(fecha) %}
+    {% set dia = fecha|date('d') %}
+    {% set mes = fecha|date('F')|lower %}
+    {% set anio = fecha|date('Y') %}
+
+    {% set meses = {
+        'january': 'enero',
+        'february': 'febrero',
+        'march': 'marzo',
+        'april': 'abril',
+        'may': 'mayo',
+        'june': 'junio',
+        'july': 'julio',
+        'august': 'agosto',
+        'september': 'septiembre',
+        'october': 'octubre',
+        'november': 'noviembre',
+        'december': 'diciembre'
+    } %}
+
+    {% set nombreMes = meses[mes] %}
+
+    {{ dia }} de {{ nombreMes }} del {{ anio }}
+{% endmacro %}
 <body>
-    <div class="header">
-        <h1>Contrato de Alquiler</h1>
-    </div>
-    <div class="content">
-    {{contrato.id}}
-        <p><strong>ID del Contrato:</strong> {{ contrato.id }}</p>
-        <p><strong>Fecha de Ingreso:</strong> {{ contrato.getCoFechaIngreso()|date('d/m/Y') }}</p>
-        <p><strong>Alquiler Mensual:</strong> {{ contrato.getCoAlquilerMensual() }}</p>
-        <p><strong>Agua:</strong> {{ contrato.getCoAgua() }}</p>
-        {# <p><strong>Fecha de Nacimiento:</strong> {{ contrato.getCoFechaNacimiento()|date('d/m/Y') }}</p>
-        <p><strong>Fecha de Nacimiento:</strong> {{ contrato.getCoFechaNacimiento()|date('d/m/Y') }}</p> #}
-        <p><strong>Arrendatario:</strong> {{ arrendatario.getAoNombres() }} {{ arrendatario.getAoApellidos() }}</p>
-        <p><strong>Teléfono:</strong> {{ arrendatario.getAoTelefono() }}</p>
-        <p><strong>Tipo de Arrendatario:</strong> {{ arrendatario.getAoTipo() }}</p>
-        <p><strong>Cédula de Identidad:</strong> {{ arrendatario.getAoCedulaIdentidad() }}</p>
-        <p><strong>Fecha de Nacimiento del Arrendatario:</strong> {{ arrendatario.getAoFechaNacimiento()|date('d/m/Y') }}</p>
-        <p><strong>Residencia:</strong> {{ contrato.getResidenciaId() }}</p>
-        <!-- Agrega más detalles del contrato aquí -->
-        <p><strong>Piso Posición:</strong> {{ piso.getPiPosicion() }}</p>
-        <p><strong>Piso Cuarto:</strong> {{ piso.getPiCuarto() }}</p>
-        <p><strong>Piso Zona:</strong> {{ piso.getPiZona() }}</p>
+{% import _self as macros %}
+    <div>
+        <p class="text1"><strong><u>CONTRATO DE ARRENDAMIENTO-LIMA</u></strong></p>
+        <p class="text1"><br></p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    Conste por el presente contrato de ARRENDAMIENTO; Ubicado en el Piso {{ piso.getPiPosicion() }} cuarto
+                    {{ piso.getPiZona() }}{{ piso.getPiCuarto() }} del inmueble, situado en Av. 1&deg; de Mayo 2601 (Mz-&Oacute;, Lte-06)
+                    del IV-Programa Municipal de Vivienda &ndash; El Agustino - Lima; que celebran de una parte Luz Erlene RAMOS VASQUEZ Y Florentino Angel Chambilla Ayhuasi, representados por su administrador
+                    Harold Angel Chambilla Ramos, identificado con DNI: 75599373, domiciliado en el   2do. Piso del predio señalado, Cel. 923 130 305 y 994 992 366, a quien en
+                    adelante se le denominará ARRENDADOR(A) y de la otra parte el Sr(a). {{ arrendatario.getAoNombres() }} {{ arrendatario.getAoApellidos() }} identificado con DNI: {{ arrendatario.getAoCedulaIdentidad() }}, con Cel.
+                    {{ arrendatario.getAoTelefono() }}, a quien en adelante se le denominará ARRENDATARIO(A),
+                    {# @Html.Raw(convivientes) #}
+                </p>
+            </strong>
+        </p>
+
+        <p class="text2">
+            <strong>
+                <p class="text3">@Html.Raw(convivientes)</p>
+                <p class="text3">
+                    PRIMERA.- COMO ARRENDATARIO(A) es copropietario(a) del inmueble ubicado en la Av. 1ro. De Mayo 2601 (Mz-O;, Lte-06) del IV-Programa Municipal de
+                    Vivienda - El Agustino, Lima, parte del mismo (un cuarto con un baño independiente), ubicado en el Piso {{ piso.getPiPosicion() }} 
+                    cuarto {{ piso.getPiZona() }}{{ piso.getPiCuarto() }} del inmueble mencionado, que se da en arrendamiento al
+                    arrendatario(a), quien declara que el ambiente cuenta con un sistema eléctrico operativo (Sóquete, tomacorriente, interruptor) puerta sin roturas, y con chapas operativas-funcionando,
+                    vidrios de ventanas y completos sin rajaduras, el baño cuenta con una tasa, tanque, lavatorio sin rajaduras, ducha y pila funcionando sin fuga de agua, obligándose a mantenerlo y
+                    devolverlo en buen estado de conservación.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    SEGUNDA.- COMO ARRENDATARIO(A) destinar&aacute; el ambiente Como vivienda familiar quedando prohibido variar su finalidad, o incrementar más
+                    personas bajo resolución del contrato(prohibido tomar bebidas alcohólicas).
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    TERCERA.- Que el plazo del presente contrato es indeterminado, pudiendo reajustar la arrendadora la merced conductiva cada seis meses, según sea el
+                    caso.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    CUARTA.- La merced conductiva del arrendamiento que se pacta es La suma de {{ contrato.getCoAlquilerMensual() }} por mes adelantado, el agua es
+                    S/. {{ contrato.getCoAgua() }} mensual.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    QUINTA.- COMO ARRENDATARIO(A) ingresa a ocupar el cuarto el {{ macros.formatFecha(contrato.getCoFechaIngreso()) }}, pagando el mes adelantado y la garantía de S/. 100 soles pagará
+                    el {{ macros.formatFecha(contrato.getCoFechaIngreso()) }}.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    SEXTA.- COMO ARRENDATARIO(A), no podr&aacute; realizar mejoras en el cuarto alquilado, sin el consentimiento expreso de la Arrendadora, caso
+                    contrario quedar&aacute; a favor de la Arrendadora sin que signifique la devoluci&oacute;n por las mejoras.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    SEPTIMA.- Las reparaciones que sean necesarias realizar en las instalaciones de agua , luz o servicios durante la vigencia del presente contrato, y/o
+                    mientras el/la Arrendatario(a) permanezca en el cuarto, ser&aacute; a cuenta exclusiva de &eacute;lla.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    OCTAVA.- COMO ARRENDATARIO(A) cumplir&aacute; sus pagos mensualmente los {{ contrato.getCoFechaIngreso()|date('d') }}  de cada mes, en caso que no cumpla en dicha fecha, pagar&aacute; una mora de
+                    S/. 5.00 por d&iacute;a. <u>
+                        </><span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                            Asimismo se le cortar&aacute; la Luz hasta que cumpla con
+                            el pago del alquiler.
+                        </span>
+                    </u>
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    NOVENA.- Las partes acuerdan que la mora
+                    <u>
+                        <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                            tendr&aacute; un l&iacute;mite de 07 d&iacute;as despu&eacute;s de la fecha de pago y de superar este plazo se dar&aacute; por resuelto el presente contrato y se colocar&aacute; un candado en
+                            el ingreso a sus cuarto
+                        </span>
+                    </u>
+                    , no permitiendo el ingreso a los arrendatarios hasta que cancelen la deuda, pasados cinco d&iacute;as m&aacute;s, sin la
+                    cancelaci&oacute;n respectiva;  el arrendador inventariar&aacute; sus cosas y las guardar&aacute; en la azotea quedando Como garant&iacute;a por la deuda, de no honrar su deuda
+                    pasado un mes; se rematar&aacute;n las cosas para hacerse pago de lo adeudado. Haciendo incapi&eacute;, que por el mes de guardian&iacute;a de sus cosas si fuera el caso, que ocupan un espacio
+                    y que requieren seguridad, tendr&aacute;n un costo de S/. 50.00 soles por mes, y si la obligaci&oacute;n se paga antes del mes, se pagar&aacute; en forma proporcional a los d&iacute;as de
+                    guardian&iacute;a.
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA.- COMO ARRENDATARIO(A) no podr&aacute; subarrendar el cuarto a terceras personas que no figuren en el presente contrato, bajo condici&oacute;n de
+                    resoluci&oacute;n autom&aacute;tica del contrato y pago por daños y perjuicios.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA PRIMERA- La ARRENDADORA entregar&aacute; al arrendatario(a) las llaves de su cuarto y de la puerta de la escalera, las cuales ser&aacute;n
+                    devueltas al momento de dejar el cuarto, y asimismo har&aacute; constar a la ARRENDADORA que el cuarto alquilado est&aacute; siendo entregado en las mismas condiciones que fue recibido y la
+                    ARRENDADORA o Administrador le entregar&aacute; una Constancia de ello; de lo contrario tendr&aacute; que asumir los posibles desperfectos y costo de las cosas entregadas en alquiler
+                    (si fuera el caso).
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    DECIMA SEGUNDA.- COMO ARRENDATARIO(A) se compromete a no dejar la puerta principal de la escalera abierta, para evitar el ingreso de personas ajenas a
+                    los moradores de este inmueble y
+                    <u>
+                        <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                            a no dejar objeto alguno fuera de su cuarto
+                            (cosas, tachos, escobas, basureros, &oacute; bolsas de basura)
+                        </span>
+                    </u>
+                    <span class="text3">
+                        dando mal aspecto y obstruyendo el patio, azotea y los pasadizos.
+                    </span>
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA TERCERA.- Cuando se produzca el corte de luz o agua por fallas de SEDAPAL, Como ARRENDATARIO(A) comunicar&aacute; al administrador para la
+                    restituci&oacute;n del servicio.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA CUARTA.- En ausencia de la ARRENDADORA y del administrador, ser&aacute;n representados por la Sra. Erika QUIROZ RODAS, quienes seg&uacute;n
+                    sea el caso, se ceñir&aacute;n a las cl&aacute;usulas del presente contrato y cobrar&aacute;n el alquiler en las fechas que entr&oacute; a vivir COMO ARRENDATARIO(A), caso contrario
+                    realizar&aacute;n el corte de luz hasta su pago, con los intereses moratorios acordados.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA QUINTA.-La Arrendadora hace presente que la basura se bota en las noches, el carro recolector de basura pasa a las 19.00 hrs. Y 07.00 hrs todos los
+                    d&iacute;as, para evitar malos olores y la presencia de roedores. (ratones, ratas, cucarachas etc.)
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    DECIMA SEXTA.- COMO ARRENDATARIO(A) se compromete a no ceder luz a otros inquilinos en caso de que a estos se les haya cortado dicho servicio por morosos
+                    en el pago de alquiler, asimismo se compromete a no gestionar ning&uacute;n servicio de Cable, tel&eacute;fono, fax, a ninguna entidad o vecino, sin autorizaci&oacute;n de la Arrendadora y
+                    tambi&eacute;n a
+                </span>
+                <u>
+                    <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                        no dejar los caños abiertos sobre todo en las noches.
+                    </span>
+                </u>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    DECIMA SEPTIMA.- COMO ARRENDATARIO(A) se compromete a cuidar las llaves entregadas
+                    por la ARRENDADORA,
+                    <u>
+                        <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                            no incomodando o pidiendo duplicado de las mismas, cuando sufran la p&eacute;rdida u olvido
+                            de las mismas.
+                        </span>
+                    </u>
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMA OCTAVA.- COMO ARRENDATARIO(A) se compromete a no dejar ropa tendida en otros sitios que no sea la azotea del inmueble, en los cordeles asignados
+                    a su persona.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    DECIMO NOVENA.- COMO ARRENDATARIO(A), se compromete  avisar al arrendador, cuando haya fuga de agua del tanque de la taza de baño
+                    (esto sucede cuando la tapa interna del tanque no queda en su sitio, por mal uso de la palanca).
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    VIGESIMA.- COMO ARRENDATARIO(A), no podr&aacute; ocasionar disturbios, molestias, ni actuar de manera que atente contra la moral y la fe p&uacute;
+                    blica.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    VIGESIMA PRIMERA.- Asimismo COMO ARRENDATARIO(A), se compromete a no botar sobres de galletas, papeles y otros por la ventana de su cuarto hacia el
+                    primer piso, instruyendo a sus familiares y visitas al respecto, para
+                    <u>
+                        <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>
+                            no ensuciar
+                            el frontis de la casa (1er. Piso).
+                        </span>
+                    </u>
+                    <span />
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    VIGESIMA SEGUNDA.- COMO ARRENDATARIO(A) deber&aacute; comunicar a la arrendadora su decisi&oacute;n de extinguir el contrato con 30 d&iacute;as de
+                    anticipaci&oacute;n, a fin de que el arrendador pueda con tiempo arrendar dicho cuarto,
+
+                    <u>
+                        <span style='font-size:21px;line-height:115%;font-family:"Arial",sans-serif;'>con la penalidad de perder su garant&iacute;a.</span>
+                    </u>
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <span class="text3">
+                    VIGESIMA TERCERA.- COMO ARRENDATARIO(A) se compromete a
+                    <u>
+                        <span style='font-size:24px;line-height:115%;font-family:"Arial",sans-serif;'>no criar animales en su cuarto alquilado (perros, gatos etc.).</span>
+                    </u>
+                </span>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    VIGESIMA CUARTA.- El arrendador se compromete a desocupar el predio, previo requerimiento del arrendador o del organo jurisdiccional, si es que no se
+                    paga las rentas convenidas o se concluya el contrato o se resuelva el arrendamiento.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    VIGESIMA QUINTA.- El presente contrato solo ser&aacute; anulado antes de la fecha indicada, en caso que el inquilino incumpla alguna cl&aacute;usula
+                    mencionada.
+                </p>
+            </strong>
+        </p>
+        <p class="text2">
+            <strong>
+                <p class="text3">
+                    Se hace presente que a la celebraci&oacute;n del presente contrato no ha mediado dolo, error, violencia, intimidaci&oacute;n, coacci&oacute;n, ni vicio
+                    de la voluntad y en señal de conformidad se ratifican y firman las partes el {{ macros.formatFecha(contrato.getCoFechaActual()) }}.
+                </p>
+            </strong>
+        </p>
+        <br /><br /><br /><br /><br /><br /><br />
+        <div>
+            <div class="text2">
+                <strong>
+                    <div class="text3 firma1">
+                        <div name="line">
+                            ____________________________
+                        </div>
+                        <div name="nombre">
+                            {{ arrendatario.getAoNombres() }} {{ arrendatario.getAoApellidos() }}
+                        </div>
+                        <div name="rol">
+                            Arrendatario(a)
+                        </div>
+                    </div>
+                    <div class="text3 firma2">
+                        <div name="line">
+                            ____________________________
+                        </div>
+                        <div name="nombre">
+                            Luz ramos vasquez
+                        </div>
+                        <div name="rol">
+                            ARRENDADORA
+                        </div>
+                    </div>
+
+                </strong>
+            </div>
+        </div>
+        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+        <div>
+            <div class="text2">
+                <strong>
+                    <div class="text3 firma3">
+                        <div name="line">
+                            ____________________________
+                        </div>
+                        <div name="nombre">
+                            Harol Chambilla Ramos
+                        </div>
+                        <div name="rol">
+                            Administrador
+                        </div>
+                    </div>
+                </strong>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>
