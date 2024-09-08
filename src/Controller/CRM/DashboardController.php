@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\CRM;
 
 use App\Entity\Arrendatario;
 use App\Entity\Contrato;
 use App\Entity\Piso;
+use App\Entity\Residencia;
 use App\Repository\ArrendatarioRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -54,6 +55,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Contrato', 'fa fa-file-text', Contrato::class);
         yield MenuItem::linkToCrud('Arrendatario', 'fa fa-user', Arrendatario::class);
+        yield MenuItem::linkToCrud('Residencia', 'fa fa-leaf', Residencia::class);
         yield MenuItem::linkToCrud('Piso', 'fa fa-building', Piso::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }

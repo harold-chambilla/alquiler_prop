@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\CRM;
 
 use App\Entity\Contrato;
 use App\Entity\Arrendatario;
@@ -135,7 +135,8 @@ class ContratoCrudController extends AbstractCrudController
 
         return $actions
             ->add(Crud::PAGE_INDEX, $downloadPdf)
-            ->add(Crud::PAGE_DETAIL, $downloadPdf);
+            ->add(Crud::PAGE_DETAIL, $downloadPdf)
+            ->disable(Action::DELETE);
     }
 
     public function createEntity(string $entityFqcn)
