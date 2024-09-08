@@ -4,6 +4,9 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-# login:
-#     path: /
-#     controller: App\Controller\SecurityController::login
+login:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'app_login'
+        permanent: true
