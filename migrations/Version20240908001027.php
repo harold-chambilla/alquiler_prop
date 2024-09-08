@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240905223806 extends AbstractMigration
+final class Version20240908001027 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -27,9 +27,10 @@ final class Version20240905223806 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_66696523629AF449 ON contrato (usuario_id_id)');
         $this->addSql('CREATE INDEX IDX_66696523DC60AB69 ON contrato (residencia_id_id)');
         $this->addSql('CREATE INDEX IDX_66696523FE9CA306 ON contrato (piso_id_id)');
-        $this->addSql('CREATE TABLE detalle_consumo_luz (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, lectura_anterior_id_id INTEGER DEFAULT NULL, lectura_actual_id_id INTEGER DEFAULT NULL, dcl_consumo NUMERIC(16, 2) DEFAULT NULL, dcl_tipo VARCHAR(64) DEFAULT NULL, dcl_subtotal NUMERIC(16, 2) DEFAULT NULL, dcl_estado BOOLEAN DEFAULT NULL, CONSTRAINT FK_595F04ABF7CF212E FOREIGN KEY (lectura_anterior_id_id) REFERENCES lectura (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_595F04ABA36312A0 FOREIGN KEY (lectura_actual_id_id) REFERENCES lectura (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
+        $this->addSql('CREATE TABLE detalle_consumo_luz (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, lectura_anterior_id_id INTEGER DEFAULT NULL, lectura_actual_id_id INTEGER DEFAULT NULL, recibo_id_id INTEGER DEFAULT NULL, dcl_consumo NUMERIC(16, 2) DEFAULT NULL, dcl_tipo VARCHAR(64) DEFAULT NULL, dcl_subtotal NUMERIC(16, 2) DEFAULT NULL, dcl_estado BOOLEAN DEFAULT NULL, CONSTRAINT FK_595F04ABF7CF212E FOREIGN KEY (lectura_anterior_id_id) REFERENCES lectura (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_595F04ABA36312A0 FOREIGN KEY (lectura_actual_id_id) REFERENCES lectura (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_595F04ABF3B92350 FOREIGN KEY (recibo_id_id) REFERENCES recibo (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_595F04ABF7CF212E ON detalle_consumo_luz (lectura_anterior_id_id)');
         $this->addSql('CREATE INDEX IDX_595F04ABA36312A0 ON detalle_consumo_luz (lectura_actual_id_id)');
+        $this->addSql('CREATE INDEX IDX_595F04ABF3B92350 ON detalle_consumo_luz (recibo_id_id)');
         $this->addSql('CREATE TABLE lectura (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, medidor_id_id INTEGER DEFAULT NULL, lel_dato NUMERIC(16, 2) DEFAULT NULL, lel_fecha DATETIME DEFAULT NULL, lel_estado BOOLEAN DEFAULT NULL, lel_tipo VARCHAR(16) DEFAULT NULL, CONSTRAINT FK_C60ABD51CA85D6F FOREIGN KEY (medidor_id_id) REFERENCES medidor (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_C60ABD51CA85D6F ON lectura (medidor_id_id)');
         $this->addSql('CREATE TABLE medidor (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, mel_codigo VARCHAR(64) DEFAULT NULL, mel_tipo VARCHAR(64) DEFAULT NULL, mel_marca VARCHAR(64) DEFAULT NULL, mel_año VARCHAR(16) DEFAULT NULL, mel_fecha_compra DATETIME DEFAULT NULL, mel_fecha_instalacion DATETIME DEFAULT NULL, mel_fecha_desinstalacion DATETIME DEFAULT NULL, mel_estado BOOLEAN DEFAULT NULL)');
