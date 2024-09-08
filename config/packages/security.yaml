@@ -4,19 +4,17 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory:
-            memory:
-                users:
-                    test@ksperu.com:
-                        password: '$2y$13$xtrIdVadiSkl6jjuZ8jiouVzkNjKJ3gXzaLZMTPreAaN5TBZL1S5m'
-                        roles: ['ROLE_ADMIN']
+        app_user_provider:
+            entity:
+                class: App\Entity\Usuario
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
             form_login:
                 login_path: app_login
                 check_path: app_login
