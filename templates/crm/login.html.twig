@@ -26,74 +26,80 @@
 
     {% include '@EasyAdmin/flash_messages.html.twig' %}
 
-    <div class="login-wrapper">
-        <header class="main-header">
-            <div id="header-logo">
-                {% block header_logo %}
-                    {% if page_title %}
-                        {% if ea is defined %}
-                            <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
-                                {{ page_title|raw }}
-                            </a>
-                        {% else %}
-                            <div class="logo {{ page_title|length > 14 ? 'logo-long' }}">
-                                {{ page_title|raw }}
-                            </div>
-                        {% endif %}
-                    {% endif %}
-                {% endblock header_logo %}
-            </div>
-        </header>
+    <body style="background-image: url('https://media.istockphoto.com/id/1443827073/es/foto/vista-en-primer-plano-de-la-puerta-con-la-llave-abierta-en-la-sala-de-estar.jpg?s=612x612&w=0&k=20&c=g0qnXCh-VFpb755-HGqQj12TMyq9khbU2X5TDMSyPFo='); background-size: cover; background-position: center; background-repeat: no-repeat;">
 
-        <section class="content">
-
-            {% if error|default(false) %}
-                <div class="w-100 alert alert-danger rounded mb-3">
-                    <i class="fas fa-times-circle mr-1"></i>
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                </div>
-            {% endif %}
-
-            <form method="post" action="{{ action|default('') }}">
-                {% if csrf_token_intention|default(false) %}
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
-                {% endif %}
-
-                <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea is defined ? path(ea.dashboardRouteName) : '/') }}" />
-
-                <div class="form-group">
-                    <label class="form-control-label required" for="username">{{ _username_label }}</label>
-                    <div class="form-widget">
-                        <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control" value="{{ last_username|default('') }}" required autofocus autocomplete="username">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="login-card bg-white p-4 rounded shadow-lg" style="max-width: 400px; width: 100%; backdrop-filter: blur(10px);">
+                <header class="text-center mb-4">
+                    <div id="header-logo">
+                        {% block header_logo %}
+                            {% if page_title %}
+                                {% if ea is defined %}
+                                    <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+                                        {{ page_title|raw }}
+                                    </a>
+                                {% else %}
+                                    <div class="logo {{ page_title|length > 14 ? 'logo-long' }}">
+                                        {{ page_title|raw }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endblock header_logo %}
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label required" for="password">{{ _password_label }}</label>
-                    <div class="form-widget">
-                        <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control" required autocomplete="current-password">
-                    </div>
-
-                    {% if forgot_password_enabled|default(false) %}
-                        <div class="form-text">
-                            <a href="{{ forgot_password_path|default('#') }}">{{ _forgot_password_label }}</a>
+                </header>
+        
+                <section class="content">
+                    {% if error|default(false) %}
+                        <div class="alert alert-danger rounded mb-3 d-flex align-items-center">
+                            <i class="fas fa-times-circle me-2"></i>
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
                         </div>
                     {% endif %}
-                </div>
-
-                {% if remember_me_enabled|default(false) %}
-                    <div class="form-group">
-                        <input class="form-check-input" type="checkbox" id="remember_me" name="{{ remember_me_parameter|default('_remember_me') }}" {{ remember_me_checked|default(false) ? 'checked' }}>
-                        <label class="form-check-label" for="remember_me">
-                            {{ _remember_me_label }}
-                        </label>
-                    </div>
-                {% endif %}
-
-                <button type="submit" class="btn btn-primary btn-lg btn-block">{{ _sign_in_label }}</button>
-            </form>
-
-            <script src="{{ asset('login.js', constant('EasyCorp\\Bundle\\EasyAdminBundle\\Asset\\AssetPackage::PACKAGE_NAME')) }}"></script>
-        </section>
-    </div>
+        
+                    <form method="post" action="{{ action|default('') }}">
+                        {% if csrf_token_intention|default(false) %}
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
+                        {% endif %}
+        
+                        <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea is defined ? path(ea.dashboardRouteName) : '/') }}" />
+        
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text d-flex align-items-center bg-light border-0" style="width: 3rem; height: 3rem; justify-content: center; border-radius: 0.375rem 0 0 0.375rem;">
+                                    <i class="fas fa-user" style="font-size: 1.25rem;"></i>
+                                </span>
+                                <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control border-start-0" placeholder="Correo electrónico" value="{{ last_username|default('') }}" required autofocus autocomplete="username" style="height: 3rem;">
+                            </div>
+                        </div>
+        
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text d-flex align-items-center bg-light border-0" style="width: 3rem; height: 3rem; justify-content: center; border-radius: 0.375rem 0 0 0.375rem;">
+                                    <i class="fas fa-lock" style="font-size: 1.25rem;"></i>
+                                </span>
+                                <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control border-start-0" placeholder="Contraseña" required autocomplete="current-password" style="height: 3rem;">
+                            </div>
+                        </div>
+        
+                        {% if forgot_password_enabled|default(false) %}
+                            <div class="text-end mb-3">
+                                <a href="{{ forgot_password_path|default('#') }}" class="text-decoration-none">{{ _forgot_password_label }}</a>
+                            </div>
+                        {% endif %}
+        
+                        {% if remember_me_enabled|default(false) %}
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="remember_me" name="{{ remember_me_parameter|default('_remember_me') }}" {{ remember_me_checked|default(false) ? 'checked' }}>
+                                <label class="form-check-label" for="remember_me">
+                                    {{ _remember_me_label }}
+                                </label>
+                            </div>
+                        {% endif %}
+        
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">{{ _sign_in_label }}</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </body>
 {% endblock %}
