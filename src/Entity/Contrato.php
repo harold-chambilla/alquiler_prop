@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ContratoRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -20,17 +21,11 @@ class Contrato
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $co_fecha_ingreso = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $co_fecha_vencimiento = null;
 
     #[ORM\ManyToOne(inversedBy: 'contratos', cascade: ['persist'])]
     private ?Arrendatario $arrendatario_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'contratos')]
-    private ?Usuario $usuario_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'contratos')]
-    private ?Residencia $residencia_id = null;
 
     #[ORM\OneToMany(targetEntity: Recibo::class, mappedBy: 'contrato_id')]
     private Collection $recibos;
@@ -84,9 +79,19 @@ class Contrato
     public function setCoFechaVencimiento(?\DateTimeInterface $co_fecha_vencimiento): static
     {
         $this->co_fecha_vencimiento = $co_fecha_vencimiento;
-
         return $this;
     }
+
+    public function setFechaVencimientoPorDefecto(): void
+{
+    // Verificamos si la fecha de ingreso está definida
+    if ($this->getCoFechaIngreso()) {
+        
+        $fechaVencimiento = $this->getCoFechaIngreso();
+        $this->setCoFechaVencimiento($fechaVencimiento);
+    }
+}
+
 
     public function getArrendatarioId(): ?Arrendatario
     {
@@ -96,30 +101,6 @@ class Contrato
     public function setArrendatarioId(?Arrendatario $arrendatario_id): static
     {
         $this->arrendatario_id = $arrendatario_id;
-
-        return $this;
-    }
-
-    public function getUsuarioId(): ?Usuario
-    {
-        return $this->usuario_id;
-    }
-
-    public function setUsuarioId(?Usuario $usuario_id): static
-    {
-        $this->usuario_id = $usuario_id;
-
-        return $this;
-    }
-
-    public function getResidenciaId(): ?Residencia
-    {
-        return $this->residencia_id;
-    }
-
-    public function setResidenciaId(?Residencia $residencia_id): static
-    {
-        $this->residencia_id = $residencia_id;
 
         return $this;
     }

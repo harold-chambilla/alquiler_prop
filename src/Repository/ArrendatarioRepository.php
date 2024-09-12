@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Arrendatario;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Arrendatario>
@@ -19,6 +20,16 @@ class ArrendatarioRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Arrendatario::class);
+    }
+
+    public function findByUsuario($usuario): QueryBuilder
+    {
+        return $this->createQueryBuilder('a')
+        ->join('a.contratos', 'c')
+        ->join('c.piso_id', 'p')
+        ->join('p.residencia_id', 'r')
+        ->andWhere('r.usuario = :usuario')
+        ->setParameter('usuario', $usuario);
     }
 
     //    /**

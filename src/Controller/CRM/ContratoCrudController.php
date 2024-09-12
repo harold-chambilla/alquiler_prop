@@ -4,8 +4,15 @@ namespace App\Controller\CRM;
 
 use App\Entity\Contrato;
 use App\Entity\Arrendatario;
+use Doctrine\ORM\QueryBuilder;
+use App\Repository\ContratoRepository;
+use App\Controller\CRM\PisoCrudController;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -18,10 +25,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ContratoCrudController extends AbstractCrudController
 {
+    private $contratoRepository;
+    private $entitymanager;
+
+    public function __construct(ContratoRepository $contratoRepository, EntityManagerInterface $entitymanager)
+    {
+        $this->contratoRepository = $contratoRepository;
+        $this->entitymanager = $entitymanager;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Contrato::class;
@@ -44,7 +62,24 @@ class ContratoCrudController extends AbstractCrudController
             ->setRequired(true);
         $fields[] = AssociationField::new('piso_id', 'Piso')
             ->setRequired(true)
-            ->setCrudController(PisoCrudController::class);
+            ->setCrudController(PisoCrudController::class)
+            ->setFormTypeOption('choice_label', function ($piso) {
+                $residencia = $piso->getResidenciaId();
+                return sprintf(
+                    'Posición: %s, Cuarto: %s, Zona: %s - Residencia: %s',
+                    $piso->getPiPosicion(),
+                    $piso->getPiCuarto(),
+                    $piso->getPiZona(),
+                    $residencia ? $residencia->getResDireccion() : 'Sin residencia asignada'
+                );
+            })
+            ->setQueryBuilder(function (QueryBuilder $queryBuilder) {
+                $usuario = $this->getUser();
+                return $queryBuilder
+                    ->join('entity.residencia_id', 'r')
+                    ->andWhere('r.usuario = :usuario')
+                    ->setParameter('usuario', $usuario);
+            });
 
         if ($pageName === Crud::PAGE_INDEX) {
             // Mostrar el campo combinado en la vista de índice
@@ -69,7 +104,11 @@ class ContratoCrudController extends AbstractCrudController
                 ->setFormTypeOption('required', true);
             $fields[] = TextField::new('arrendatario_id.ao_telefono', 'Teléfono del Arrendatario')
                 ->setRequired(true);
-            $fields[] = TextField::new('arrendatario_id.ao_tipo', 'Tipo de Arrendatario')
+            $fields[] = ChoiceField::new('arrendatario_id.ao_tipo', 'Tipo de Arrendatario')
+                ->setChoices([
+                    'Titular' => 'titular',
+                    'No titular' => 'no titular',
+                ])
                 ->setRequired(true);
             $fields[] = TextField::new('arrendatario_id.ao_cedula_identidad', 'Cédula de Identidad')
                 ->setRequired(true);
@@ -139,15 +178,47 @@ class ContratoCrudController extends AbstractCrudController
             ->disable(Action::DELETE);
     }
 
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $usuario = $this->getUser();
+        return $this->contratoRepository->findByUsuario($usuario);
+    }
+
     public function createEntity(string $entityFqcn)
     {
         $contrato = new Contrato();
-        
+        date_default_timezone_set('America/Lima');
+        $fechaactual = new DateTime();
+        $contrato->setCoFechaActual($fechaactual);
         // Inicializamos un nuevo arrendatario
         $arrendatario = new Arrendatario();
         $contrato->setArrendatarioId($arrendatario);
         $contrato->setCoEstado(1);
+        // $this->entitymanager->persist($contrato);
+        // $this->entitymanager->flush();
+
+        // $contrato->setCoFechaVencimiento($contrato->getCoFechaIngreso());
+        // $this->entitymanager->flush();
         return $contrato;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+	{
+        if (!$entityInstance instanceof Contrato) {
+            return;
+        }
+
+        // Obtener la fecha de ingreso
+        $fechaIngreso = $entityInstance->getCoFechaIngreso();
+        
+        // Verificar que la fecha de ingreso no sea nula
+        if ($fechaIngreso) {
+            $fechaVencimiento = date_modify(clone $entityInstance->getCoFechaIngreso(), '+1 month');
+            $entityInstance->setCoFechaVencimiento($fechaVencimiento);
+        }
+
+        // Persistir la entidad
+        parent::persistEntity($entityManager, $entityInstance);
     }
     /*
     public function configureFields(string $pageName): iterable

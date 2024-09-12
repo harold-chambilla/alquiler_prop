@@ -18,15 +18,15 @@ class Residencia
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $res_direccion = null;
 
-    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: 'residencia_id')]
-    private Collection $contratos;
-
     #[ORM\OneToMany(targetEntity: Piso::class, mappedBy: 'residencia_id')]
     private Collection $pisos;
 
+    #[ORM\ManyToOne(inversedBy: 'residencia')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Usuario $usuario = null;
+
     public function __construct()
     {
-        $this->contratos = new ArrayCollection();
         $this->pisos = new ArrayCollection();
     }
 
@@ -43,36 +43,6 @@ class Residencia
     public function setResDireccion(?string $res_direccion): static
     {
         $this->res_direccion = $res_direccion;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Contrato>
-     */
-    public function getContratos(): Collection
-    {
-        return $this->contratos;
-    }
-
-    public function addContrato(Contrato $contrato): static
-    {
-        if (!$this->contratos->contains($contrato)) {
-            $this->contratos->add($contrato);
-            $contrato->setResidenciaId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeContrato(Contrato $contrato): static
-    {
-        if ($this->contratos->removeElement($contrato)) {
-            // set the owning side to null (unless already changed)
-            if ($contrato->getResidenciaId() === $this) {
-                $contrato->setResidenciaId(null);
-            }
-        }
 
         return $this;
     }
@@ -103,6 +73,18 @@ class Residencia
                 $piso->setResidenciaId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUsuario(): ?Usuario
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?Usuario $usuario): static
+    {
+        $this->usuario = $usuario;
 
         return $this;
     }

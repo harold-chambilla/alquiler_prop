@@ -21,6 +21,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
+        
         // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         // return $this->redirect($adminUrlGenerator->setController(ContratoCrudController::class)->generateUrl());
         
@@ -38,9 +39,11 @@ class DashboardController extends AbstractDashboardController
         // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
         // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
         //
+        $user = $this->getUser();
+        $arrendatarios = $this->arrendatarioRepository->findByUsuario($user);
 
         return $this->render('crm/dashboard.html.twig', [
-            "arrendatarios" => $this->arrendatarioRepository->findAll(),
+            "arrendatarios" => $arrendatarios->getQuery()->getResult(),
         ]);
     }
 
