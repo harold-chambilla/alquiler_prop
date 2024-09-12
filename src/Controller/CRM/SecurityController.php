@@ -26,7 +26,7 @@ class SecurityController extends AbstractController
             'error' => $error,
             'csrf_token_intention' => 'authenticate',
             'target_path' => $this->generateUrl('app_admin'),
-            'page_title' => 'ALQUILERES',
+            'page_title' => 'LOGIN',
             'username_label' => 'Correo',
             'password_label' => 'Contraseña',
             'sign_in_label' => 'Iniciar sesion',
