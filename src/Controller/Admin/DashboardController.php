@@ -6,6 +6,7 @@ use App\Entity\Arrendatario;
 use App\Entity\Contrato;
 use App\Entity\Piso;
 use App\Repository\ArrendatarioRepository;
+use App\Repository\ContratoRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private ArrendatarioRepository $arrendatarioRepository){ }
+    public function __construct(private ArrendatarioRepository $arrendatarioRepository, private ContratoRepository $contratoRepository){ }
 
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
@@ -40,6 +41,7 @@ class DashboardController extends AbstractDashboardController
 
         return $this->render('crm/dashboard.html.twig', [
             "arrendatarios" => $this->arrendatarioRepository->findAll(),
+            "contratos" => $this->contratoRepository->findAll()
         ]);
     }
 
