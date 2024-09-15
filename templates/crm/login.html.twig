@@ -26,73 +26,57 @@
 
     {% include '@EasyAdmin/flash_messages.html.twig' %}
 
-    <body style="background-image: url('https://media.istockphoto.com/id/1443827073/es/foto/vista-en-primer-plano-de-la-puerta-con-la-llave-abierta-en-la-sala-de-estar.jpg?s=612x612&w=0&k=20&c=g0qnXCh-VFpb755-HGqQj12TMyq9khbU2X5TDMSyPFo='); background-size: cover; background-position: center; background-repeat: no-repeat;">
-
-        <div class="d-flex justify-content-center align-items-center vh-100">
-           <div class="login-card p-5 rounded shadow-lg" style="background-color:#f5f5f5; max-width: 400px; width: 100%; border-radius: 20px;">
-                <header class="text-center mb-4">
-                    <div id="header-logo">
-                        {% block header_logo %}
-                            <img src="https://www.pngall.com/wp-content/uploads/15/Login-PNG-File.png" alt="Logo" style="width: 80px; height: 80px; display: block; margin: 0 auto 20px auto;">
-                            {% if page_title %}
-                                {% if ea is defined %}
-                                    <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
-                                        {{ page_title|raw }}
-                                    </a>
-                                {% else %}
-                                    <div class="logo {{ page_title|length > 14 ? 'logo-long' }}">
-                                        {{ page_title|raw }}
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                        {% endblock header_logo %}
-                    </div>
-                </header>
-        
-                <section class="content">
-                    {% if error|default(false) %}
-                        <div class="alert alert-danger rounded mb-3 d-flex align-items-center">
-                            <i class="fas fa-times-circle me-2"></i>
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
+    <body>
+        <section class="py-3 py-md-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
+                    <div class="card border border-light-subtle rounded-3 shadow-sm">
+                    <div class="card-body p-3 p-md-4 p-xl-5">
+                        <div class="text-center mb-3">
+                        <a>
+                            <img src={{"/images/logo.png"}} alt="alquiler" width="150" height="150">
+                        </a>
                         </div>
-                    {% endif %}
-        
-                    <form method="post" action="{{ action|default('') }}">
+                        <h2 class="fs-6 fw-normal text-center text-secondary mb-4">Iniciar Sesion</h2>
+
+                        {% include '@EasyAdmin/flash_messages.html.twig' %}
+
+                        <form method="post" action="{{ action|default('') }}">
                         {% if csrf_token_intention|default(false) %}
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
                         {% endif %}
-        
-                        <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea is defined ? path(ea.dashboardRouteName) : '/') }}" />
-        
-                        <div class="mb-4">
-                            <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control bg-transparent text-center border-0 border-bottom" placeholder="admin@ksperu.com" required 
-                            style="outline: none; box-shadow: none; border-color: transparent; border-bottom: 1px solid grey;">
-                        </div>
 
-                        <div class="mb-4">
-                            <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control bg-transparent text-center border-0 border-bottom" placeholder="123456" required 
-                            style="outline: none; box-shadow: none; border-color: transparent; border-bottom: 1px solid grey;">
+                        <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea is defined ? path(ea.dashboardRouteName) : '/') }}" />
+
+                        <div class="row gy-2 overflow-hidden">
+                            <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" name="{{ username_parameter|default('_username') }}" id="email" placeholder="name@example.com" required>
+                                <label for="email" class="form-label">{{ _username_label|default('Email') }}</label>
+                            </div>
+                            </div>
+                            <div class="col-12">
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" name="{{ password_parameter|default('_password') }}" id="password" placeholder="Password" required>
+                                <label for="password" class="form-label">{{ _password_label|default('Password') }}</label>
+                            </div>
+                            </div>
+                            <div class="col-12">
+                            <div class="d-grid my-3">
+                                <button class="btn btn-primary btn-lg" type="submit">{{ _sign_in_label|default('Log in') }}</button>
+                            </div>
+                            </div>
                         </div>
-        
-                        {% if forgot_password_enabled|default(false) %}
-                            <div class="text-end mb-3">
-                                <a href="{{ forgot_password_path|default('#') }}" class="text-decoration-none">{{ _forgot_password_label }}</a>
-                            </div>
-                        {% endif %}
-        
-                        {% if remember_me_enabled|default(false) %}
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="remember_me" name="{{ remember_me_parameter|default('_remember_me') }}" {{ remember_me_checked|default(false) ? 'checked' }}>
-                                <label class="form-check-label" for="remember_me">
-                                    {{ _remember_me_label }}
-                                </label>
-                            </div>
-                        {% endif %}
-        
-                        <button type="submit" class="btn btn-light w-100 py-2 mb-3" style="border-radius: 30px; font-weight: bold;">{{ _sign_in_label }}</button>
-                    </form>
-                </section>
+                        </form>
+
+                    </div>
+                    </div>
+                </div>
+                </div>
             </div>
-        </div>
+        </section>
     </body>
+
+
 {% endblock %}
