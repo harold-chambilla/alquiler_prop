@@ -28,8 +28,6 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // Crear usuarios admin y user
-        
         $admin = new Usuario();
         $admin->setEmail('admin@ksperu.com')
             ->setRoles(['ROLE_ADMIN'])
@@ -43,7 +41,7 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
         $arrendatarios = [];
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $arrendatario = new Arrendatario();
             $arrendatario->setAoNombres('Nombre '.$i)
                 ->setAoApellidos('Apellido '.$i)
@@ -51,41 +49,44 @@ class AppFixtures extends Fixture
                 ->setAoTipo('Tipo '.$i)
                 ->setAoCedulaIdentidad('7654321'.$i)
                 ->setAoFechaNacimiento(new \DateTime('1980-05-10'))
-                ->setAoFotoDni(NULL)
-                ->setAoFoto(NULL)
+                ->setAoFotoDni(null)
+                ->setAoFoto(null)
                 ->setAoEstado(true);
             $manager->persist($arrendatario);
             $arrendatarios[] = $arrendatario;
         }
 
         $residencias = [];
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $residencia = new Residencia();
-            $residencia->setUsuario($i === 1 ? $admin : $user)
+            $residencia->setUsuario($i % 2 === 0 ? $admin : $user)
                 ->setResDireccion('Calle Falsa '.$i);
             $manager->persist($residencia);
             $residencias[] = $residencia;
         }
 
         $pisos = [];
-        for ($i = 1; $i <= 3; $i++) {
-            $piso = new Piso();
-            $piso->setPiPosicion('Posición '.$i)
-                ->setPiCuarto('Cuarto '.$i)
-                ->setPiZona('Zona '.$i)
-                ->setResidenciaId($residencias[$i-1])
-                ->setPiEstado(true);
-            $manager->persist($piso);
-            $pisos[] = $piso;
+        foreach ($residencias as $residencia) {
+            for ($i = 1; $i <= 3; $i++) {
+                $piso = new Piso();
+                $piso->setPiPosicion('Posición '.$i)
+                    ->setPiCuarto('Cuarto '.$i)
+                    ->setPiZona('Zona '.$i)
+                    ->setResidenciaId($residencia)
+                    ->setPiEstado(true);
+                $manager->persist($piso);
+                $pisos[] = $piso;
+            }
         }
 
         $contratos = [];
-        for ($i = 0; $i < 3; $i++) {
+        foreach ($arrendatarios as $i => $arrendatario) {
+            if (!isset($pisos[$i])) break;
             $contrato = new Contrato();
-            $contrato->setArrendatarioId($arrendatarios[$i])
+            $contrato->setArrendatarioId($arrendatario)
                 ->setPisoId($pisos[$i])
-                ->setCoFechaIngreso(new \DateTime('2023-01-01'))
-                ->setCoFechaVencimiento(new \DateTime('2024-01-01'))
+                ->setCoFechaIngreso(new \DateTime('2023-01-'.($i+1)))
+                ->setCoFechaVencimiento(new \DateTime('2024-01-'.($i+1)))
                 ->setCoAlquilerMensual(1500.00 + $i)
                 ->setCoAgua(50.00 + $i)
                 ->setCoFechaActual(new \DateTime())
@@ -95,7 +96,7 @@ class AppFixtures extends Fixture
         }
 
         $medidores = [];
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $medidor = new Medidor();
             $medidor->setMelCodigo('COD-'.$i)
                 ->setMelTipo('Eléctrico')
@@ -110,19 +111,21 @@ class AppFixtures extends Fixture
         }
 
         $lecturas = [];
-        for ($i = 1; $i <= 3; $i++) {
-            $lectura = new Lectura();
-            $lectura->setLelDato(rand(100, 500))
-                ->setLelFecha(new \DateTime('2023-01-'.$i))
-                ->setLelTipo('Tipo '.$i)
-                ->setLelEstado(true)
-                ->setMedidorId($medidores[$i-1]);
-            $manager->persist($lectura);
-            $lecturas[] = $lectura;
+        foreach ($medidores as $medidor) {
+            for ($i = 1; $i <= 3; $i++) {
+                $lectura = new Lectura();
+                $lectura->setLelDato(rand(100, 500))
+                    ->setLelFecha(new \DateTime('2023-01-'.$i))
+                    ->setLelTipo('Tipo '.$i)
+                    ->setLelEstado(true)
+                    ->setMedidorId($medidor);
+                $manager->persist($lectura);
+                $lecturas[] = $lectura;
+            }
         }
 
         $conceptosPago = [];
-        for ($i = 1; $i <= 3; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $conceptoPago = new ConceptoPago();
             $conceptoPago->setCopNombre('Concepto '.$i)
                 ->setCopDescripcion('Descripción del concepto '.$i)
@@ -133,36 +136,41 @@ class AppFixtures extends Fixture
         }
 
         $recibos = [];
-        for ($i = 1; $i <= 3; $i++) {
-            $recibo = new Recibo();
-            $recibo->setReCodigo('REC-'.$i)
-                ->setReFechaEmision(new \DateTime('2023-02-'.$i))
-                ->setContratoId($contratos[$i-1])
-                ->setReEstado(true)
-                ->setRePagoTotal(rand(300, 600));
-            $manager->persist($recibo);
-            $recibos[] = $recibo;
+        foreach ($contratos as $i => $contrato) {
+            for ($j = 1; $j <= 2; $j++) {
+                $recibo = new Recibo();
+                $recibo->setReCodigo('REC-'.$i.'-'.$j)
+                    ->setReFechaEmision(new \DateTime('2023-02-'.$j))
+                    ->setContratoId($contrato)
+                    ->setReEstado(true)
+                    ->setRePagoTotal(rand(300, 600));
+                $manager->persist($recibo);
+                $recibos[] = $recibo;
+            }
         }
 
-        for ($i = 1; $i <= 3; $i++) {
+        foreach ($lecturas as $i => $lectura) {
+            if (!isset($recibos[$i])) break;
             $detalleConsumoLuz = new DetalleConsumoLuz();
             $detalleConsumoLuz->setDclConsumo(rand(50, 150))
                 ->setDclTipo('Consumo '.$i)
                 ->setDclSubtotal(rand(100, 300))
                 ->setDclEstado(true)
-                ->setLecturaAnteriorId($lecturas[$i-1])
-                ->setLecturaActualId($lecturas[$i-1])
-                ->setReciboId($recibos[$i-1]);
+                ->setLecturaAnteriorId($lectura)
+                ->setLecturaActualId($lectura)
+                ->setReciboId($recibos[$i]);
             $manager->persist($detalleConsumoLuz);
         }
 
-        for ($i = 1; $i <= 3; $i++) {
+        foreach ($recibos as $i => $recibo) {
+            if (!isset($conceptosPago[$i % 10])) break;
             $reciboConceptoPago = new ReciboConceptoPago();
-            $reciboConceptoPago->setRcpFechaDigitacion(new \DateTime('2023-02-'.$i))
-                ->setReciboId($recibos[$i-1])
-                ->setConceptoPagoId($conceptosPago[$i-1]);
+            $reciboConceptoPago->setRcpFechaDigitacion(new \DateTime('2023-02-'.($i % 30 + 1)))
+                ->setReciboId($recibo)
+                ->setConceptoPagoId($conceptosPago[$i % 10]);
             $manager->persist($reciboConceptoPago);
         }
+        
         $manager->flush();
     }
 }
