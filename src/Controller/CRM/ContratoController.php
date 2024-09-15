@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Alquiler;
+namespace App\Controller\CRM;
 
 use App\Entity\Contrato;
 use App\Repository\ContratoRepository;
@@ -33,7 +33,7 @@ class ContratoController extends AbstractController
         $pisos = $contrato->getPisoId();
         $arrendatario = $contrato->getArrendatarioId();
         // Renderizar la vista HTML (ajusta la vista según lo que necesitas)
-        $html = $this->renderView('alquiler/contrato/pdf.html.twig', [
+        $html = $this->renderView('crm/contrato/pdf.html.twig', [
             'contrato' => $contrato,
             'residencia' => $residencia,
             'piso' => $pisos,

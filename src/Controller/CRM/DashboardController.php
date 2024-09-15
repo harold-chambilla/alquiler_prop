@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\CRM;
 
 use App\Entity\Arrendatario;
 use App\Entity\Contrato;
 use App\Entity\Piso;
+use App\Entity\Residencia;
 use App\Repository\ArrendatarioRepository;
 use App\Repository\ContratoRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -21,6 +22,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
+        
         // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         // return $this->redirect($adminUrlGenerator->setController(ContratoCrudController::class)->generateUrl());
         
@@ -38,6 +40,8 @@ class DashboardController extends AbstractDashboardController
         // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
         // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
         //
+        $user = $this->getUser();
+        $arrendatarios = $this->arrendatarioRepository->findByUsuario($user);
 
         return $this->render('crm/dashboard.html.twig', [
             "arrendatarios" => $this->arrendatarioRepository->findAll(),
@@ -56,6 +60,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Contrato', 'fa fa-file-text', Contrato::class);
         yield MenuItem::linkToCrud('Arrendatario', 'fa fa-user', Arrendatario::class);
+        yield MenuItem::linkToCrud('Residencia', 'fa fa-leaf', Residencia::class);
         yield MenuItem::linkToCrud('Piso', 'fa fa-building', Piso::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }

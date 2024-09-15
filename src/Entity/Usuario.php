@@ -35,12 +35,16 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: 'usuario_id')]
-    private Collection $contratos;
+
+    /**
+     * @var Collection<int, Residencia>
+     */
+    #[ORM\OneToMany(targetEntity: Residencia::class, mappedBy: 'usuario')]
+    private Collection $residencia;
 
     public function __construct()
     {
-        $this->contratos = new ArrayCollection();
+        $this->residencia = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,29 +123,29 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Contrato>
+     * @return Collection<int, Residencia>
      */
-    public function getContratos(): Collection
+    public function getResidencia(): Collection
     {
-        return $this->contratos;
+        return $this->residencia;
     }
 
-    public function addContrato(Contrato $contrato): static
+    public function addResidencium(Residencia $residencium): static
     {
-        if (!$this->contratos->contains($contrato)) {
-            $this->contratos->add($contrato);
-            $contrato->setUsuarioId($this);
+        if (!$this->residencia->contains($residencium)) {
+            $this->residencia->add($residencium);
+            $residencium->setUsuario($this);
         }
 
         return $this;
     }
 
-    public function removeContrato(Contrato $contrato): static
+    public function removeResidencium(Residencia $residencium): static
     {
-        if ($this->contratos->removeElement($contrato)) {
+        if ($this->residencia->removeElement($residencium)) {
             // set the owning side to null (unless already changed)
-            if ($contrato->getUsuarioId() === $this) {
-                $contrato->setUsuarioId(null);
+            if ($residencium->getUsuario() === $this) {
+                $residencium->setUsuario(null);
             }
         }
 

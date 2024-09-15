@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Piso;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Piso>
@@ -19,6 +20,14 @@ class PisoRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Piso::class);
+    }
+
+    public function findByUsuario($usuario): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.residencia_id', 'r')
+            ->andWhere('r.usuario = :usuario')
+            ->setParameter('usuario', $usuario);
     }
 
     //    /**

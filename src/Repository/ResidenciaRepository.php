@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Residencia;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Residencia>
@@ -21,6 +22,14 @@ class ResidenciaRepository extends ServiceEntityRepository
         parent::__construct($registry, Residencia::class);
     }
 
+    
+
+    public function findByUsuario($usuario): QueryBuilder
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.usuario = :usuario')
+            ->setParameter('usuario', $usuario);
+    }
     //    /**
     //     * @return Residencia[] Returns an array of Residencia objects
     //     */

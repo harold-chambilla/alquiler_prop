@@ -9,9 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ArrendatarioRepository::class)]
-
+#[UniqueEntity(fields: ['ao_cedula_identidad'], message: 'Esta cédula de identidad ya está en uso.')]
+#[UniqueEntity(fields: ['ao_telefono'], message: 'Este teléfono ya está en uso.')]
 /**
  * @Assert\EnableAutoMapping()
  */
@@ -28,13 +30,13 @@ class Arrendatario
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $ao_apellidos = null;
 
-    #[ORM\Column(length: 16, nullable: true)]
+    #[ORM\Column(length: 16, nullable: true, unique:true)]
     private ?string $ao_telefono = null;
 
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $ao_tipo = null;
 
-    #[ORM\Column(length: 16)]
+    #[ORM\Column(length: 16, unique:true)]
     private ?string $ao_cedula_identidad = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]

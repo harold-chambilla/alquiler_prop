@@ -29,10 +29,11 @@
     <body style="background-image: url('https://media.istockphoto.com/id/1443827073/es/foto/vista-en-primer-plano-de-la-puerta-con-la-llave-abierta-en-la-sala-de-estar.jpg?s=612x612&w=0&k=20&c=g0qnXCh-VFpb755-HGqQj12TMyq9khbU2X5TDMSyPFo='); background-size: cover; background-position: center; background-repeat: no-repeat;">
 
         <div class="d-flex justify-content-center align-items-center vh-100">
-            <div class="login-card bg-white p-4 rounded shadow-lg" style="max-width: 400px; width: 100%; backdrop-filter: blur(10px);">
+           <div class="login-card p-5 rounded shadow-lg" style="background-color:#f5f5f5; max-width: 400px; width: 100%; border-radius: 20px;">
                 <header class="text-center mb-4">
                     <div id="header-logo">
                         {% block header_logo %}
+                            <img src="https://www.pngall.com/wp-content/uploads/15/Login-PNG-File.png" alt="Logo" style="width: 80px; height: 80px; display: block; margin: 0 auto 20px auto;">
                             {% if page_title %}
                                 {% if ea is defined %}
                                     <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
@@ -63,22 +64,14 @@
         
                         <input type="hidden" name="{{ target_path_parameter|default('_target_path') }}" value="{{ target_path|default(ea is defined ? path(ea.dashboardRouteName) : '/') }}" />
         
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text d-flex align-items-center bg-light border-0" style="width: 3rem; height: 3rem; justify-content: center; border-radius: 0.375rem 0 0 0.375rem;">
-                                    <i class="fas fa-user" style="font-size: 1.25rem;"></i>
-                                </span>
-                                <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control border-start-0" placeholder="Correo electrónico" value="{{ last_username|default('') }}" required autofocus autocomplete="username" style="height: 3rem;">
-                            </div>
+                        <div class="mb-4">
+                            <input type="text" id="username" name="{{ username_parameter|default('_username') }}" class="form-control bg-transparent text-center border-0 border-bottom" placeholder="admin@ksperu.com" required 
+                            style="outline: none; box-shadow: none; border-color: transparent; border-bottom: 1px solid grey;">
                         </div>
-        
-                        <div class="mb-3">
-                            <div class="input-group">
-                                <span class="input-group-text d-flex align-items-center bg-light border-0" style="width: 3rem; height: 3rem; justify-content: center; border-radius: 0.375rem 0 0 0.375rem;">
-                                    <i class="fas fa-lock" style="font-size: 1.25rem;"></i>
-                                </span>
-                                <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control border-start-0" placeholder="Contraseña" required autocomplete="current-password" style="height: 3rem;">
-                            </div>
+
+                        <div class="mb-4">
+                            <input type="password" id="password" name="{{ password_parameter|default('_password') }}" class="form-control bg-transparent text-center border-0 border-bottom" placeholder="123456" required 
+                            style="outline: none; box-shadow: none; border-color: transparent; border-bottom: 1px solid grey;">
                         </div>
         
                         {% if forgot_password_enabled|default(false) %}
@@ -96,7 +89,7 @@
                             </div>
                         {% endif %}
         
-                        <button type="submit" class="btn btn-primary w-100 btn-lg">{{ _sign_in_label }}</button>
+                        <button type="submit" class="btn btn-light w-100 py-2 mb-3" style="border-radius: 30px; font-weight: bold;">{{ _sign_in_label }}</button>
                     </form>
                 </section>
             </div>
