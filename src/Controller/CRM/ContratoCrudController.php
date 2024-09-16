@@ -95,8 +95,11 @@ class ContratoCrudController extends AbstractCrudController
                     }
                     return '';
                 });
+            $fields[] = DateField::new('co_fecha_vencimiento', 'Fecha de Vencimiento');
         } else {
             // Mostrar todos los campos en la vista de edición/agregado
+            $fields[] = DateField::new('co_fecha_vencimiento', 'Fecha de Vencimiento')
+                ->setRequired(true);
             $fields[] = FormField::addPanel('Información del Arrendatario');
             $fields[] = TextField::new('arrendatario_id.ao_nombres', 'Nombres del Arrendatario')
                 ->setFormTypeOption('required', true);
