@@ -43,6 +43,10 @@ class Medidor
     #[ORM\OneToMany(targetEntity: Lectura::class, mappedBy: 'medidor_id')]
     private Collection $lecturas;
 
+    #[ORM\ManyToOne(inversedBy: 'medidors')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Piso $piso = null;
+
     public function __construct()
     {
         $this->lecturas = new ArrayCollection();
@@ -175,6 +179,18 @@ class Medidor
                 $lectura->setMedidorId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPiso(): ?Piso
+    {
+        return $this->piso;
+    }
+
+    public function setPiso(?Piso $piso): static
+    {
+        $this->piso = $piso;
 
         return $this;
     }

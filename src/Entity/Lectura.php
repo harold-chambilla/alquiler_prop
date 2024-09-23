@@ -28,15 +28,11 @@ class Lectura
     #[ORM\ManyToOne(inversedBy: 'lecturas')]
     private ?Medidor $medidor_id = null;
 
-    #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'lectura_anterior_id')]
-    private Collection $detalleConsumoLuzs;
-
     #[ORM\Column(length: 16, nullable: true)]
     private ?string $lel_tipo = null;
 
     public function __construct()
     {
-        $this->detalleConsumoLuzs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -88,36 +84,6 @@ class Lectura
     public function setMedidorId(?Medidor $medidor_id): static
     {
         $this->medidor_id = $medidor_id;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, DetalleConsumoLuz>
-     */
-    public function getDetalleConsumoLuzs(): Collection
-    {
-        return $this->detalleConsumoLuzs;
-    }
-
-    public function addDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
-    {
-        if (!$this->detalleConsumoLuzs->contains($detalleConsumoLuz)) {
-            $this->detalleConsumoLuzs->add($detalleConsumoLuz);
-            $detalleConsumoLuz->setLecturaAnteriorId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
-    {
-        if ($this->detalleConsumoLuzs->removeElement($detalleConsumoLuz)) {
-            // set the owning side to null (unless already changed)
-            if ($detalleConsumoLuz->getLecturaAnteriorId() === $this) {
-                $detalleConsumoLuz->setLecturaAnteriorId(null);
-            }
-        }
 
         return $this;
     }

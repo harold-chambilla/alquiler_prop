@@ -16,6 +16,7 @@ use App\Entity\ReciboConceptoPago;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
 class AppFixtures extends Fixture
 {
@@ -96,19 +97,24 @@ class AppFixtures extends Fixture
         }
 
         $medidores = [];
-        for ($i = 1; $i <= 20; $i++) {
-            $medidor = new Medidor();
-            $medidor->setMelCodigo('COD-'.$i)
-                ->setMelTipo('Eléctrico')
-                ->setMelMarca('Marca '.$i)
-                ->setMelAño('202'.rand(0, 9))
-                ->setMelFechaCompra(new \DateTime('2022-01-'.rand(1, 28)))
-                ->setMelFechaInstalacion(new \DateTime('2022-02-'.rand(1, 28)))
-                ->setMelFechaDesinstalacion(null)
-                ->setMelEstado(true);
-            $manager->persist($medidor);
-            $medidores[] = $medidor;
-        }
+        
+            for ($i = 0; $i <= count($pisos) -1; $i++) {
+                if (!isset($pisos[$i])) break;
+                $medidor = new Medidor();
+                $medidor->setMelCodigo('COD-'.$i+1)
+                    ->setPiso($pisos[$i])
+                    ->setMelTipo('Eléctrico')
+                    ->setMelMarca('Marca '.$i+1)
+                    ->setMelAño('202'.rand(0, 9))
+                    ->setMelFechaCompra(new \DateTime('2022-01-'.rand(1, 28)))
+                    ->setMelFechaInstalacion(new \DateTime('2022-02-'.rand(1, 28)))
+                    ->setMelFechaDesinstalacion(null)
+                    ->setMelEstado(true);
+                $manager->persist($medidor);
+                $medidores[] = $medidor;
+            }
+            
+        
 
         $lecturas = [];
         foreach ($medidores as $medidor) {
@@ -135,41 +141,41 @@ class AppFixtures extends Fixture
             $conceptosPago[] = $conceptoPago;
         }
 
-        $recibos = [];
-        foreach ($contratos as $i => $contrato) {
-            for ($j = 1; $j <= 2; $j++) {
-                $recibo = new Recibo();
-                $recibo->setReCodigo('REC-'.$i.'-'.$j)
-                    ->setReFechaEmision(new \DateTime('2023-02-'.$j))
-                    ->setContratoId($contrato)
-                    ->setReEstado(true)
-                    ->setRePagoTotal(rand(300, 600));
-                $manager->persist($recibo);
-                $recibos[] = $recibo;
-            }
-        }
+        // $recibos = [];
+        // foreach ($contratos as $i => $contrato) {
+        //     for ($j = 1; $j <= 2; $j++) {
+        //         $recibo = new Recibo();
+        //         $recibo->setReCodigo('REC-'.$i.'-'.$j)
+        //             ->setReFechaEmision(new \DateTime('2023-02-'.$j))
+        //             ->setContratoId($contrato)
+        //             ->setReEstado(true)
+        //             ->setRePagoTotal(rand(300, 600));
+        //         $manager->persist($recibo);
+        //         $recibos[] = $recibo;
+        //     }
+        // }
 
-        foreach ($lecturas as $i => $lectura) {
-            if (!isset($recibos[$i])) break;
-            $detalleConsumoLuz = new DetalleConsumoLuz();
-            $detalleConsumoLuz->setDclConsumo(rand(50, 150))
-                ->setDclTipo('Consumo '.$i)
-                ->setDclSubtotal(rand(100, 300))
-                ->setDclEstado(true)
-                ->setLecturaAnteriorId($lectura)
-                ->setLecturaActualId($lectura)
-                ->setReciboId($recibos[$i]);
-            $manager->persist($detalleConsumoLuz);
-        }
+        // foreach ($lecturas as $i => $lectura) {
+        //     if (!isset($recibos[$i])) break;
+        //     $detalleConsumoLuz = new DetalleConsumoLuz();
+        //     $detalleConsumoLuz->setDclConsumo(rand(50, 150))
+        //         ->setDclTipo('Consumo '.$i)
+        //         ->setDclSubtotal(rand(100, 300))
+        //         ->setDclEstado(true)
+        //         ->setLecturaAnteriorId($lectura)
+        //         ->setLecturaActualId($lectura)
+        //         ->setReciboId($recibos[$i]);
+        //     $manager->persist($detalleConsumoLuz);
+        // }
 
-        foreach ($recibos as $i => $recibo) {
-            if (!isset($conceptosPago[$i % 10])) break;
-            $reciboConceptoPago = new ReciboConceptoPago();
-            $reciboConceptoPago->setRcpFechaDigitacion(new \DateTime('2023-02-'.($i % 30 + 1)))
-                ->setReciboId($recibo)
-                ->setConceptoPagoId($conceptosPago[$i % 10]);
-            $manager->persist($reciboConceptoPago);
-        }
+        // foreach ($recibos as $i => $recibo) {
+        //     if (!isset($conceptosPago[$i % 10])) break;
+        //     $reciboConceptoPago = new ReciboConceptoPago();
+        //     $reciboConceptoPago->setRcpFechaDigitacion(new \DateTime('2023-02-'.($i % 30 + 1)))
+        //         ->setReciboId($recibo)
+        //         ->setConceptoPagoId($conceptosPago[$i % 10]);
+        //     $manager->persist($reciboConceptoPago);
+        // }
         
         $manager->flush();
     }
