@@ -45,7 +45,7 @@ class DashboardController extends AbstractDashboardController
 
         return $this->render('crm/dashboard.html.twig', [
             "arrendatarios" => $this->arrendatarioRepository->findAll(),
-            "contratos" => $this->contratoRepository->findAll()
+            "contratos" => $this->contratoRepository->findAll(),
         ]);
     }
 
