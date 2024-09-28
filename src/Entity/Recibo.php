@@ -35,22 +35,15 @@ class Recibo
     private Collection $reciboConceptoPagos;
 
     /**
-     * @var Collection<int, DetalleConsumoLuz>
+     * @var Collection<int, ReciboDetalleConsumo>
      */
-    #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'recibo_id')]
-    private Collection $detalleConsumoLuzs;
-
-    /**
-     * @var Collection<int, DetalleConsumoLuz>
-     */
-    #[ORM\OneToMany(targetEntity: DetalleConsumoLuz::class, mappedBy: 'recibo_id')]
-    private Collection $detalleConsumoLuz;
+    #[ORM\OneToMany(targetEntity: ReciboDetalleConsumo::class, mappedBy: 'recibo', orphanRemoval: true)]
+    private Collection $reciboDetalleConsumos;
 
     public function __construct()
     {
         $this->reciboConceptoPagos = new ArrayCollection();
-        $this->detalleConsumoLuzs = new ArrayCollection();
-        $this->detalleConsumoLuz = new ArrayCollection();
+        $this->reciboDetalleConsumos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,42 +141,34 @@ class Recibo
 
         return $this;
     }
-
+    
     /**
-     * @return Collection<int, DetalleConsumoLuz>
+     * @return Collection<int, ReciboDetalleConsumo>
      */
-    public function getDetalleConsumoLuzs(): Collection
+    public function getReciboDetalleConsumos(): Collection
     {
-        return $this->detalleConsumoLuzs;
+        return $this->reciboDetalleConsumos;
     }
 
-    public function addDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
+    public function addReciboDetalleConsumo(ReciboDetalleConsumo $reciboDetalleConsumo): static
     {
-        if (!$this->detalleConsumoLuzs->contains($detalleConsumoLuz)) {
-            $this->detalleConsumoLuzs->add($detalleConsumoLuz);
-            $detalleConsumoLuz->setReciboId($this);
+        if (!$this->reciboDetalleConsumos->contains($reciboDetalleConsumo)) {
+            $this->reciboDetalleConsumos->add($reciboDetalleConsumo);
+            $reciboDetalleConsumo->setRecibo($this);
         }
 
         return $this;
     }
 
-    public function removeDetalleConsumoLuz(DetalleConsumoLuz $detalleConsumoLuz): static
+    public function removeReciboDetalleConsumo(ReciboDetalleConsumo $reciboDetalleConsumo): static
     {
-        if ($this->detalleConsumoLuzs->removeElement($detalleConsumoLuz)) {
+        if ($this->reciboDetalleConsumos->removeElement($reciboDetalleConsumo)) {
             // set the owning side to null (unless already changed)
-            if ($detalleConsumoLuz->getReciboId() === $this) {
-                $detalleConsumoLuz->setReciboId(null);
+            if ($reciboDetalleConsumo->getRecibo() === $this) {
+                $reciboDetalleConsumo->setRecibo(null);
             }
         }
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, DetalleConsumoLuz>
-     */
-    public function getDetalleConsumoLuz(): Collection
-    {
-        return $this->detalleConsumoLuz;
     }
 }

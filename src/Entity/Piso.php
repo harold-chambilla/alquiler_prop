@@ -36,6 +36,12 @@ class Piso
     #[ORM\OneToMany(targetEntity: Contrato::class, mappedBy: 'piso_id')]
     private Collection $contratos;
 
+    /**
+     * @var Collection<int, Medidor>
+     */
+    #[ORM\OneToMany(targetEntity: Medidor::class, mappedBy: 'piso', orphanRemoval: true)]
+    private Collection $medidors;
+
     public function __toString(): string
     {
         return $this->pi_cuarto . ' ' . $this->pi_zona;
@@ -44,6 +50,7 @@ class Piso
     public function __construct()
     {
         $this->contratos = new ArrayCollection();
+        $this->medidors = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +142,36 @@ class Piso
             // set the owning side to null (unless already changed)
             if ($contrato->getPisoId() === $this) {
                 $contrato->setPisoId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Medidor>
+     */
+    public function getMedidors(): Collection
+    {
+        return $this->medidors;
+    }
+
+    public function addMedidor(Medidor $medidor): static
+    {
+        if (!$this->medidors->contains($medidor)) {
+            $this->medidors->add($medidor);
+            $medidor->setPiso($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedidor(Medidor $medidor): static
+    {
+        if ($this->medidors->removeElement($medidor)) {
+            // set the owning side to null (unless already changed)
+            if ($medidor->getPiso() === $this) {
+                $medidor->setPiso(null);
             }
         }
 

@@ -29,8 +29,9 @@ class ContratoController extends AbstractController
     public function pdf(Contrato $contrato): Response
     {
 
-        $residencia = $contrato->getResidenciaId();
+        
         $pisos = $contrato->getPisoId();
+        $residencia = $contrato->getPisoId()->getResidenciaId();
         $arrendatario = $contrato->getArrendatarioId();
         // Renderizar la vista HTML (ajusta la vista según lo que necesitas)
         $html = $this->renderView('crm/contrato/pdf.html.twig', [

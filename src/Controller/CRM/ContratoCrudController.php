@@ -2,13 +2,13 @@
 
 namespace App\Controller\CRM;
 
+use DateTime;
 use App\Entity\Contrato;
 use App\Entity\Arrendatario;
 use Doctrine\ORM\QueryBuilder;
 use App\Repository\ContratoRepository;
-use App\Controller\CRM\PisoCrudController;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Controller\CRM\PisoCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -21,23 +21,28 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Symfony\Component\Routing\RouterInterface;
 
 class ContratoCrudController extends AbstractCrudController
 {
     private $contratoRepository;
+    private $router;
     private $entitymanager;
 
-    public function __construct(ContratoRepository $contratoRepository, EntityManagerInterface $entitymanager)
+    public function __construct(ContratoRepository $contratoRepository, EntityManagerInterface $entitymanager, RouterInterface $routerInterface)
     {
         $this->contratoRepository = $contratoRepository;
         $this->entitymanager = $entitymanager;
+        $this->router = $routerInterface;
     }
 
     public static function getEntityFqcn(): string
@@ -95,8 +100,11 @@ class ContratoCrudController extends AbstractCrudController
                     }
                     return '';
                 });
+            $fields[] = DateField::new('co_fecha_vencimiento', 'Fecha de Vencimiento');
         } else {
             // Mostrar todos los campos en la vista de edición/agregado
+            $fields[] = DateField::new('co_fecha_vencimiento', 'Fecha de Vencimiento')
+                ->setRequired(true);
             $fields[] = FormField::addPanel('Información del Arrendatario');
             $fields[] = TextField::new('arrendatario_id.ao_nombres', 'Nombres del Arrendatario')
                 ->setFormTypeOption('required', true);
@@ -164,6 +172,10 @@ class ContratoCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $createRecibo = Action::new('createRecibo', 'Crear Recibo')
+            ->linkToCrudAction('redirectToCreateRecibo')
+            ->setIcon('fa fa-file-invoice');
+
         $downloadPdf = Action::new('downloadPdf', 'Descargar PDF')
             ->linkToRoute('contrato_pdf', function (Contrato $contrato) {
                 return [
@@ -175,6 +187,8 @@ class ContratoCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, $downloadPdf)
             ->add(Crud::PAGE_DETAIL, $downloadPdf)
+            ->add(Crud::PAGE_INDEX, $createRecibo)
+            ->add(Crud::PAGE_DETAIL, $createRecibo)
             ->disable(Action::DELETE);
     }
 
@@ -219,6 +233,21 @@ class ContratoCrudController extends AbstractCrudController
 
         // Persistir la entidad
         parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function redirectToCreateRecibo(AdminContext $context): RedirectResponse
+    {
+        // Obtenemos el contrato actual
+        $contrato = $context->getEntity()->getInstance();
+
+        // Redirigimos a la página de creación de recibo, pasando el contrato como parámetro
+        $url = $this->router->generate('app_admin', [
+            'crudControllerFqcn' => ReciboCrudController::class,
+            'crudAction' => 'new',
+            'contrato_id' => $contrato->getId(),
+        ]);
+
+        return $this->redirect($url);
     }
     /*
     public function configureFields(string $pageName): iterable
