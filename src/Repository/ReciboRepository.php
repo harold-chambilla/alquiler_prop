@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Recibo;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,11 +17,58 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ReciboRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Recibo::class);
+        $this->entityManager = $entityManager;
     }
 
+    public function obtenerPagosPorMes(): array
+    {
+          // Obtener todos los recibos con estado 1
+        $recibos = $this->createQueryBuilder('x')
+        ->select('x.re_fecha_emision, x.re_pago_total')
+        ->where('x.re_estado = 1')
+        ->getQuery()
+        ->getResult();
+
+        // Inicializar un array para almacenar la suma de los pagos por mes
+        $pagosPorMes = [];
+
+        // Iterar sobre los recibos para agrupar y sumar los pagos por mes
+        foreach ($recibos as $recibo) {
+            // Obtener la fecha de emisión
+            $fecha = $recibo['re_fecha_emision'];
+            // Formatear la fecha como "d M Y"
+            $mesFormateado = $fecha->format('d M Y');
+
+            // Sumar los pagos por mes
+            if (!isset($pagosPorMes[$mesFormateado])) {
+                $pagosPorMes[$mesFormateado] = 0;
+            }
+            $pagosPorMes[$mesFormateado] += $recibo['re_pago_total'];
+        }
+
+        // Inicializar los arrays para los resultados
+        $prices = [];
+        $dates = [];
+
+        // Formatear los resultados finales
+        foreach ($pagosPorMes as $mes => $sumaPagos) {
+            $dates[] = $mes; // Agregar la fecha formateada
+            $prices[] = $sumaPagos; // Agregar la suma de pagos
+        }
+
+        // Devolver el formato deseado
+        return [
+            'series' => [
+                'prices' => $prices,
+                'dates' => $dates
+            ]
+        ];
+    }
 //    /**
 //     * @return Recibo[] Returns an array of Recibo objects
 //     */
