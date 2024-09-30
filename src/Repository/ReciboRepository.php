@@ -6,6 +6,7 @@ use App\Entity\Recibo;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<Recibo>
@@ -17,10 +18,54 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class ReciboRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $entityManager;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, Recibo::class);
+        $this->entityManager = $entityManager;
     }
+
+    public function obtenerPagosPorMes(): array
+    {
+        $recibos = $this->createQueryBuilder('x')
+        ->select('x.re_fecha_emision, x.re_pago_total')
+        ->where('x.re_estado = 1')
+        // ->groupBy('mesFormateado')
+        ->orderBy('x.re_fecha_emision', 'ASC')
+        ->getQuery()
+        ->getResult();
+
+        $pagosPorMes = [];
+
+        foreach ($recibos as $recibo) {
+            $fecha = $recibo['re_fecha_emision'];
+            $mesFormateado = $fecha->format('d M Y');
+
+            if (!isset($pagosPorMes[$mesFormateado])) {
+                $pagosPorMes[$mesFormateado] = 0;
+            }
+            $pagosPorMes[$mesFormateado] += $recibo['re_pago_total'];
+        }
+
+        $prices = [];
+        $dates = [];
+
+        foreach ($pagosPorMes as $mes => $sumaPagos) {
+            $dates[] = $mes;
+            $prices[] = $sumaPagos;
+        }
+
+        return [
+            'series' => [
+                'prices' => $prices,
+                'dates' => $dates
+            ]
+        ];
+    }
+
+    
+    
 
     public function findByUsuario($usuario): QueryBuilder
     {

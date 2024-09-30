@@ -10,16 +10,19 @@ use App\Entity\ReciboConceptoPago;
 use App\Entity\Residencia;
 use App\Repository\ArrendatarioRepository;
 use App\Repository\ContratoRepository;
+use App\Repository\ReciboRepository;
+use App\Repository\ResidenciaRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private ArrendatarioRepository $arrendatarioRepository, private ContratoRepository $contratoRepository){ }
+    public function __construct(private ArrendatarioRepository $arrendatarioRepository, private ContratoRepository $contratoRepository, private ResidenciaRepository $residenciaRepository, private ReciboRepository $reciboRepository){ }
 
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
@@ -45,9 +48,17 @@ class DashboardController extends AbstractDashboardController
         $user = $this->getUser();
         $arrendatarios = $this->arrendatarioRepository->findByUsuario($user);
 
+        $pagosPorMes = $this->reciboRepository->obtenerPagosPorMes();
+        $tipoArrendatarios = $this->arrendatarioRepository->countTitularesYNoTitulares();
+        // $lecturasPorMes = $this->reciboRepository->obtenerLecturasPorMes();
+
         return $this->render('crm/dashboard.html.twig', [
             "arrendatarios" => $this->arrendatarioRepository->findAll(),
             "contratos" => $this->contratoRepository->findAll(),
+            "residencias" => $this->residenciaRepository->findAll(),
+            "pagosPorMes" => $pagosPorMes,
+            "tipoArrendatarios" => $tipoArrendatarios,
+            // "lecturasPorMes" => $lecturasPorMes
         ]);
     }
 
