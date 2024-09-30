@@ -20,7 +20,7 @@ class ReciboConceptoPago
     #[ORM\ManyToOne(inversedBy: 'reciboConceptoPagos')]
     private ?Recibo $recibo_id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reciboConceptoPagos')]
+    #[ORM\ManyToOne(inversedBy: 'reciboConceptoPagos', cascade: ['persist'])]
     private ?ConceptoPago $concepto_pago_id = null;
 
     public function getId(): ?int

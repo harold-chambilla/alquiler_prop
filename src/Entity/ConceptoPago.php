@@ -28,7 +28,7 @@ class ConceptoPago
     #[ORM\Column(nullable: true)]
     private ?bool $cop_estado = null;
 
-    #[ORM\OneToMany(targetEntity: ReciboConceptoPago::class, mappedBy: 'concepto_pago_id')]
+    #[ORM\OneToMany(targetEntity: ReciboConceptoPago::class, mappedBy: 'concepto_pago_id', orphanRemoval: true, cascade: ['persist'])]
     private Collection $reciboConceptoPagos;
 
     public function __construct()

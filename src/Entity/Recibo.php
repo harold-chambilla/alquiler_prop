@@ -31,7 +31,7 @@ class Recibo
     #[ORM\ManyToOne(inversedBy: 'recibos')]
     private ?Contrato $contrato_id = null;
 
-    #[ORM\OneToMany(targetEntity: ReciboConceptoPago::class, mappedBy: 'recibo_id')]
+    #[ORM\OneToMany(targetEntity: ReciboConceptoPago::class, mappedBy: 'recibo_id', orphanRemoval: true, cascade: ['persist'])]
     private Collection $reciboConceptoPagos;
 
     /**
@@ -170,5 +170,19 @@ class Recibo
         }
 
         return $this;
+    }
+
+    public function getFormattedArrendatario(): string
+    {
+        if ($this->getContratoId()) {
+            $contrato = $this->getContratoId();
+            return sprintf(
+                '%s %s (DNI: %s)',
+                $contrato->getArrendatarioId()->getAoNombres(),
+                $contrato->getArrendatarioId()->getAoApellidos(),
+                $contrato->getArrendatarioId()->getAoCedulaIdentidad()
+            );
+        }
+        return '';
     }
 }

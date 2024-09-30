@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Recibo;
 use App\Entity\Contrato;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,6 +31,19 @@ class ContratoRepository extends ServiceEntityRepository
         ->andWhere('r.usuario = :usuario')
         ->setParameter('usuario', $usuario);
     }
+
+    public function findLastReciboByContrato(Contrato $contrato): ?Recibo
+{
+    return $this->createQueryBuilder('c')
+        ->select('r')
+        ->from(Recibo::class, 'r')
+        ->where('r.contrato_id = :contrato')
+        ->setParameter('contrato', $contrato)
+        ->orderBy('r.re_fecha_emision', 'DESC') // Ordenar por fecha de emisión en orden descendente
+        ->setMaxResults(1) // Limitar a 1 resultado (el más reciente)
+        ->getQuery()
+        ->getOneOrNullResult(); // Devolver el recibo o null si no existe
+}
     //    /**
     //     * @return Contrato[] Returns an array of Contrato objects
     //     */

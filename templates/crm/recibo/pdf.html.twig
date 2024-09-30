@@ -1,47 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Recibo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Consumo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .recibo-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .recibo-header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .recibo-header p {
+            margin: 5px 0;
+        }
+        .recibo-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .recibo-details th, .recibo-details td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .recibo-details th {
+            background-color: #f4f4f9;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .recibo-details tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .recibo-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
+        .recibo-footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777;
+        }
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .footer-info div {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <div class="recibo-header">
         <h1>Recibo de Consumo</h1>
-        <p>Recibo N°: {{ recibo.id }}</p>
-        <p>Fecha: {{ "now"|date("d/m/Y") }}</p>
+        <p><strong>Recibo N°:</strong> {{ recibo.id }}</p>
+        <p><strong>Fecha:</strong> {{ recibo.ReFechaEmision|date("d/m/Y") }}</p>
     </div>
 
     <table class="recibo-details">
         <thead>
             <tr>
                 <th>Concepto</th>
-                <th>Consumo</th>
-                <th>Precio</th>
+                <th>Consumo (kWh)</th>
+                <th>Precio (S/.)</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Luz</td>
-                <td>{{ consumoLuz }} kWh</td>
-                <td>S/. {{ precioLuz|number_format(2, '.', ',') }}</td>
+                <td>Luz de Cuarto</td>
+                <td>{{ consumoLuz ? consumoLuz.getLelDato() : 'N/A' }} kWh</td>
+                <td>S/. {{ consumoLuz ? (consumoLuz.getLelDato() * 1)|number_format(2, '.', ',') : 'N/A' }}</td>
             </tr>
             <tr>
-                <td>Agua</td>
-                <td>{{ consumoAgua }} m³</td>
-                <td>S/. {{ precioAgua|number_format(2, '.', ',') }}</td>
-            </tr>
-            <tr>
-                <td>Escalera</td>
-                <td>{{ consumoEscalera }} kWh</td>
-                <td>S/. {{ precioEscalera|number_format(2, '.', ',') }}</td>
+                <td>Luz de Escalera</td>
+                <td>{{ consumoEscalera ? consumoEscalera.getLelDato() : 'N/A' }} kWh</td>
+                <td>S/. {{ consumoEscalera ? (consumoEscalera.getLelDato() * 1)|number_format(2, '.', ',') : 'N/A' }}</td>
             </tr>
         </tbody>
     </table>
 
     <p class="recibo-total">
-        Total a pagar: S/. {{ totalRecibo|number_format(2, '.', ',') }}
+        <strong>Total a pagar:</strong> S/. {{ recibo.RePagoTotal|number_format(2, '.', ',') }}
     </p>
-    <div>Alquiler Mensual: {{ contrato.getCoAlquilerMensual() }}</div>
-    <div>Agua: {{ contrato.getCoAgua() }}</div>
+
+    <div class="footer-info">
+        <div><strong>Alquiler Mensual:</strong> S/. {{ contrato.CoAlquilerMensual|number_format(2, '.', ',') }}</div>
+        <div><strong>Agua:</strong> S/. {{ contrato.CoAgua|number_format(2, '.', ',') }}</div>
+    </div>
+
+    <div class="recibo-footer">
+        <p>Gracias por su pago puntual.</p>
+        <p><em>Por favor conserve este recibo como comprobante.</em></p>
+    </div>
 </body>
 </html>
+

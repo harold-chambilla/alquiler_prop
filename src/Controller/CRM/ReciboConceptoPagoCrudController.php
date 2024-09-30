@@ -38,8 +38,8 @@ class ReciboConceptoPagoCrudController extends AbstractCrudController
             DateTimeField::new('rcp_fecha_digitacion', 'Fecha Digitación')
                 ->setRequired(true),
 
-            // AssociationField::new('recibo_id', 'Recibo')
-            //     ->hideOnForm(),
+            AssociationField::new('recibo_id', 'Recibo')
+                 ->hideOnForm(),
 
             // CollectionField::new('concepto_pago_id', 'Conceptos de Pago')
             //     ->setEntryType(ConceptoPagoCrudController::class)
