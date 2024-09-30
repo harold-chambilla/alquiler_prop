@@ -32,6 +32,28 @@ class ArrendatarioRepository extends ServiceEntityRepository
         ->setParameter('usuario', $usuario);
     }
 
+    public function countTitularesYNoTitulares(): array
+    {
+        // Contar titulares
+        $titulares = $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->where('a.ao_tipo = :tipo')
+            ->setParameter('tipo', 'titular')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Contar no titulares
+        $noTitulares = $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->where('a.ao_tipo = :tipo')
+            ->setParameter('tipo', 'no titular')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Devolver el resultado como [titulares, no_titulares]
+        return [(int) $titulares, (int) $noTitulares];
+    }
+
     //    /**
     //     * @return Arrendatario[] Returns an array of Arrendatario objects
     //     */

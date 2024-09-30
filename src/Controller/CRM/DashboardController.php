@@ -49,12 +49,16 @@ class DashboardController extends AbstractDashboardController
         $arrendatarios = $this->arrendatarioRepository->findByUsuario($user);
 
         $pagosPorMes = $this->reciboRepository->obtenerPagosPorMes();
+        $tipoArrendatarios = $this->arrendatarioRepository->countTitularesYNoTitulares();
+        // $lecturasPorMes = $this->reciboRepository->obtenerLecturasPorMes();
 
         return $this->render('crm/dashboard.html.twig', [
             "arrendatarios" => $this->arrendatarioRepository->findAll(),
             "contratos" => $this->contratoRepository->findAll(),
             "residencias" => $this->residenciaRepository->findAll(),
-            "pagosPorMes" => $pagosPorMes   
+            "pagosPorMes" => $pagosPorMes,
+            "tipoArrendatarios" => $tipoArrendatarios,
+            // "lecturasPorMes" => $lecturasPorMes
         ]);
     }
 
