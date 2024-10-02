@@ -81,13 +81,13 @@
         <tbody>
             <tr>
                 <td>Luz de Cuarto</td>
-                <td>{{ consumoLuz ? consumoLuz.getLelDato() : 'N/A' }} kWh</td>
-                <td>S/. {{ consumoLuz ? (consumoLuz.getLelDato() * 1)|number_format(2, '.', ',') : 'N/A' }}</td>
+                <td>{{ consumoLuz ? consumoLuz : 'N/A' }} kWh</td>
+                <td>S/. {{ consumoLuz ? (consumoLuz * 1)|number_format(2, '.', ',') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td>Luz de Escalera</td>
-                <td>{{ consumoEscalera ? consumoEscalera.getLelDato() : 'N/A' }} kWh</td>
-                <td>S/. {{ consumoEscalera ? (consumoEscalera.getLelDato() * 1)|number_format(2, '.', ',') : 'N/A' }}</td>
+                <td>{{ consumoEscalera ? consumoEscalera : 'N/A' }} kWh</td>
+                <td>S/. {{ consumoEscalera ? (consumoEscalera* 1)|number_format(2, '.', ',') : 'N/A' }}</td>
             </tr>
         </tbody>
     </table>

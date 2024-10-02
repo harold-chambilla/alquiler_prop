@@ -338,7 +338,6 @@ class ReciboCrudController extends AbstractCrudController
         $contrato = $this->getContratoActual();
         $fechainiciocontrato = $contrato->getCoFechaIngreso();
         if($fechainiciocontrato !== null){
-            $fechamensual = 
             $fechamensual = date_modify($fechainiciocontrato, '+1 month');
         }
         
@@ -383,7 +382,8 @@ class ReciboCrudController extends AbstractCrudController
                     'id' => $recibo->getId(),
                 ];
             })
-            ->setIcon('fa fa-file-invoice');
+            ->setIcon('fa fa-file-invoice')
+            ->setHtmlAttributes(['target' => '_blank']);
 
             $reciboanteriorPDF = Action::new('reciboAntPdf', 'Ver Recibo Anterior')
             ->linkToRoute('recibo_pdf', function (Recibo $recibo) {
@@ -402,7 +402,8 @@ class ReciboCrudController extends AbstractCrudController
                 // Si no hay recibo anterior, puedes devolver un array vacío o manejarlo de otra manera
                 return [];
             })
-            ->setIcon('fa fa-file-invoice');
+            ->setIcon('fa fa-file-invoice')
+            ->setHtmlAttributes(['target' => '_blank']);
 
             $request = $this->requestStack->getCurrentRequest();
             $crudPage = $request->query->get('crudAction');

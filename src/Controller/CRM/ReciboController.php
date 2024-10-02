@@ -18,7 +18,7 @@ class ReciboController extends AbstractController
         $this->pdfGenerator = $pdfGenerator;
     }
     #[Route('/recibo/{id}/pdf', name: 'recibo_pdf')]
-    public function pdf(Recibo $recibo, LecturaRepository $lecturaRepository): Response
+    public function pdf(Recibo $recibo, LecturaRepository $lecturaRepository)
     {
         $lecturacuartoActual = null;
         $lecturaescaleraactual = null;
@@ -27,18 +27,28 @@ class ReciboController extends AbstractController
         $detallesRecibo = $recibo->getReciboDetalleConsumos();
         foreach($detallesRecibo as $detalleRecibo){
             if ($detalleRecibo->getRdcTipo()==1){
-                $lecturacuartoActual = $lecturaRepository->find($detalleRecibo->getLecActId());
+                $lecturacuartoActual = $detalleRecibo->getRdcConsumo();
             }else{
-                $lecturaescaleraactual = $lecturaRepository->find($detalleRecibo->getLecActId());
+                $lecturaescaleraactual = $detalleRecibo->getRdcConsumo();
             }
         }
         
-        return $this->render('crm/recibo/pdf.html.twig', [
+        $html = $this->renderView('crm/recibo/pdf.html.twig', [
             'recibo' => $recibo,
             'consumoLuz' => $lecturacuartoActual,
             'consumoEscalera' => $lecturaescaleraactual,
             'contrato' => $contrato,
 
         ]);
+
+        $pdfContent = $this->pdfGenerator->getOutputFromHtml($html);
+        return new Response(
+            $pdfContent,
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="recibo_0'.$recibo->getId().'"',
+            ]
+        );
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Controller\CRM;
 
 use App\Entity\Piso;
+use App\Entity\Medidor;
 use Doctrine\ORM\QueryBuilder;
+use App\Repository\PisoRepository;
 use App\Repository\ResidenciaRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Controller\CRM\ResidenciaCrudController;
-use App\Repository\PisoRepository;
+use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -88,6 +91,24 @@ class PisoCrudController extends AbstractCrudController
         $piso = new Piso();
         $piso->setPiEstado(1);
         return $piso;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $piso = $entityInstance;
+        $entityManager->persist($piso);        
+        $medidor = new Medidor();
+        $medidor->setPiso($piso);
+        $medidor->setMelTipo('Eléctrico');
+        $medidor->setMelMarca('Corpelima');
+        $medidor->setMelAño('202'.rand(0, 4));
+        $medidor->setMelFechaInstalacion(new DateTime());
+        $entityManager->persist($medidor); 
+        $entityManager->flush();
+        $fechacompra = $medidor->getMelFechaInstalacion();
+        $medidor->setMelFechaCompra(date_modify(clone($fechacompra),'-'.rand(1,5).' month'));
+        $medidor->setMelCodigo('MED_0'.$medidor->getId());
+        $entityManager->flush();
     }
 
     
