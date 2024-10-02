@@ -9,6 +9,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -29,11 +30,21 @@ class ResidenciaCrudController extends AbstractCrudController
     }
 
     public function configureFields(string $pageName): iterable
-    {
-        return [
-            TextField::new('res_direccion', 'Dirección'),
-        ];
-    }
+{
+    return [
+        // Panel para la información de la dirección
+        FormField::addPanel('Información de la Residencia')->setIcon('fa fa-map-marker-alt'),
+        
+        // Campo de dirección con clases y placeholder personalizados
+        TextField::new('res_direccion', 'Dirección')
+            ->setColumns('col-md-6 col-lg-4')  // Controla la disposición del campo en la fila
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Ingresa la dirección de la residencia',
+                'class' => 'form-control'
+            ]),
+    ];
+}
+
     public function createEntity(string $entityFqcn)
     {
         $residencia = new Residencia;

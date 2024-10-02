@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -41,14 +42,42 @@ class PisoCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $fields = [
-            TextField::new('pi_posicion', 'Posición'),
-            TextField::new('pi_cuarto', 'Cuarto'),
-            TextField::new('pi_zona', 'Zona'),
-            AssociationField::new('residencia_id', 'Residencia')
+        $fields = [];
+    
+        // Panel de información del piso
+        $fields[] = FormField::addPanel('Información del Piso')->setIcon('fa fa-home');
+        $fields[] = TextField::new('pi_posicion', 'Posición')
+            ->setColumns('col-md-6 col-lg-3')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Ingresa la posición del piso',
+                'class' => 'form-control'
+            ]);
+    
+        $fields[] = TextField::new('pi_cuarto', 'Cuarto')
+            ->setColumns('col-md-6 col-lg-3')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Ingresa el número de cuarto',
+                'class' => 'form-control'
+            ]);
+    
+        $fields[] = TextField::new('pi_zona', 'Zona')
+            ->setColumns('col-md-6 col-lg-3')
+            ->setFormTypeOption('attr', [
+                'placeholder' => 'Ingresa la zona del piso',
+                'class' => 'form-control'
+            ]);
+    
+        // Panel de información de residencia
+        $fields[] = FormField::addPanel('Información de la Residencia')->setIcon('fa fa-building');
+        $fields[] = AssociationField::new('residencia_id', 'Residencia')
+            ->setColumns('col-md-6 col-lg-3')
             ->setRequired(true)
             ->setCrudController(ResidenciaCrudController::class)
             ->setFormTypeOption('choice_label', 'res_direccion')
+            ->setFormTypeOption('attr', [
+                'class' => 'form-control',
+                'placeholder' => 'Selecciona la residencia'
+            ])
             ->formatValue(function ($value, $entity) {
                 return $entity->getResidenciaId()->getResDireccion();
             })
@@ -57,11 +86,12 @@ class PisoCrudController extends AbstractCrudController
                 return $queryBuilder
                     ->andWhere('entity.usuario = :usuario')
                     ->setParameter('usuario', $usuario);
-            }),
-        ];
+            });
     
-        if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_EDIT) {
-            $fields[] = ChoiceField::new('pi_estado', 'Estado piso')
+        // Si estamos en la vista de índice o edición, mostramos el estado
+        if ($pageName === Crud::PAGE_INDEX) {
+            $fields[] = ChoiceField::new('pi_estado', 'Estado del Piso')
+                ->setColumns('col-md-6 col-lg-3')
                 ->setChoices([
                     'Disponible' => 1,
                     'No disponible' => 0,
@@ -77,6 +107,7 @@ class PisoCrudController extends AbstractCrudController
     
         return $fields;
     }
+    
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {

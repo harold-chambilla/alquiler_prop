@@ -28,6 +28,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -67,58 +68,77 @@ class ReciboCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        
         if ($pageName === Crud::PAGE_INDEX) {
             return [
-                TextField::new('re_codigo', 'Código'),
-                TextField::new('re_pago_total', 'Total a pagar'),
-                DateField::new('re_fecha_emision', 'Fecha de emisión'),
+                TextField::new('re_codigo', 'Código')
+                    ->setColumns('col-md-4 col-lg-3'),
+                MoneyField::new('re_pago_total', 'Total a pagar')
+                    ->setCurrency('PEN')
+                    ->setStoredAsCents(false)
+                    ->setColumns('col-md-4 col-lg-3'),
+                DateField::new('re_fecha_emision', 'Fecha de emisión')
+                    ->setColumns('col-md-4 col-lg-3'),
                 AssociationField::new('contrato_id', 'Arrendatario')
-                ->formatValue(function ($value, $entity) {
-                    return $entity->getFormattedArrendatario();
-                }),
+                    ->formatValue(function ($value, $entity) {
+                        return $entity->getFormattedArrendatario();
+                    })
+                    ->setColumns('col-md-4 col-lg-3'),
                 ChoiceField::new('re_estado', 'Estado recibo')
                     ->setChoices([
                         'Pagado' => 1,
                         'Pendiente' => 0,
                     ])
+                    ->renderAsBadges([
+                        1 => 'success',
+                        0 => 'warning',
+                    ])
+                    ->setColumns('col-md-4 col-lg-3'),
             ];
-        }else{
+        } else {
             $lecturaLuzCuartoActual = null;
             $lecturaLuzEscaleraActual = null;
-            
+    
             if ($pageName === Crud::PAGE_EDIT && $this->getContext()->getEntity()) {
                 $recibo = $this->getContext()->getEntity()->getInstance();
                 $arrendatarioData = $recibo->getFormattedArrendatario();
                 $detallesConsumo = $recibo->getReciboDetalleConsumos();
                 if ($detallesConsumo) {
-                    foreach ($detallesConsumo as $detalleConsumo){
-                        if ($detalleConsumo->getRdcTipo() == 1){
-                            $lecturaLuzCuartoActual = $this->lecturaRepository->find($detalleConsumo->getLecActId());
-                            $lecturaLuzCuartoActual = $lecturaLuzCuartoActual->getLelDato();
-                        }else{
-                            $lecturaLuzEscaleraActual = $this->lecturaRepository->find($detalleConsumo->getLecActId());
-                            $lecturaLuzEscaleraActual = $lecturaLuzEscaleraActual->getLelDato();
+                    foreach ($detallesConsumo as $detalleConsumo) {
+                        if ($detalleConsumo->getRdcTipo() == 1) {
+                            $lecturaLuzCuartoActual = $this->lecturaRepository->find($detalleConsumo->getLecActId())->getLelDato();
+                        } else {
+                            $lecturaLuzEscaleraActual = $this->lecturaRepository->find($detalleConsumo->getLecActId())->getLelDato();
                         }
                     }
                 }
-            }else{
+            } else {
                 $arrendatarioData = $this->getArrendatarioDatos();
             }
+    
             return [
+                // Panel de información del arrendatario
+                FormField::addPanel('Información del Arrendatario')->setIcon('fa fa-user'),
                 TextField::new('Arrendatario')
                     ->setFormTypeOption('data', $arrendatarioData)
                     ->setFormTypeOption('mapped', false)
-                    ->setFormTypeOption('disabled', true),
+                    ->setFormTypeOption('disabled', true)
+                    ->setColumns('col-md-6 col-lg-3'),
+    
+                // Panel de lecturas de consumo
+                FormField::addPanel('Lecturas de Consumo')->setIcon('fa fa-lightbulb'),
                 NumberField::new('lecturaLuzCuartoActual', 'Lectura actual de luz de cuarto')
                     ->setFormTypeOption('data', $lecturaLuzCuartoActual)
                     ->setRequired(true)
-                    ->setFormTypeOption('mapped', false),
+                    ->setFormTypeOption('mapped', false)
+                    ->setColumns('col-md-6 col-lg-3'),
                 NumberField::new('lecturaLuzEscaleraActual', 'Lectura actual de luz de escalera')
                     ->setFormTypeOption('data', $lecturaLuzEscaleraActual)
                     ->setRequired(true)
-                    ->setFormTypeOption('mapped', false),
-                FormField::addFieldset('Conceptos de pago'),
+                    ->setFormTypeOption('mapped', false)
+                    ->setColumns('col-md-6 col-lg-3'),
+    
+                // Panel para conceptos de pago
+                FormField::addPanel('Conceptos de Pago')->setIcon('fa fa-money-bill'),
                 CollectionField::new('reciboConceptoPagos', 'Conceptos de Pago')
                     ->allowAdd()
                     ->allowDelete()
@@ -130,10 +150,12 @@ class ReciboCrudController extends AbstractCrudController
                     ->formatValue(function ($value, $entity) {
                         return $entity->getConceptoPagoId()->getCopNombre();
                     })
-                    ->hideOnIndex(),
+                    ->hideOnIndex()
+                    ->setColumns('col-md-12'),
             ];
         }
     }
+    
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
